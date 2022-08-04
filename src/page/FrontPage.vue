@@ -37,9 +37,30 @@
             <h2 style="position:relative;left:20px">news</h2>
         </div>
         <div class="blogExhibit">
+            <div>
+                <router-link to="/blog">
+                    <img src="" style="width:160px;height:90px;">
+                    <div class="false1" style="height: 90px;width: 600px; position: relative;left: 170px;top: -94px;;">
+                        <strong>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                            xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</strong>
+                    </div>
+                    <div style="position: relative;left:780px;width:160px;top:-185px;height:90px;text-align:center;line-height:70px;">
+                        2022-01-02
+                    </div>
+                </router-link>
+            </div>
+            <div>
+                <img src="" style="width:160px;height:90px;">
+                <div class="false1" style="height: 90px;width: 600px; position: relative;left: 170px;top: -94px;;">
+                    <strong>xxccccccccssssszzzxxxxxxxxx</strong>
+                </div>
+				<div style="position: relative;left:780px;width:160px;top:-185px;height:90px;text-align:center;line-height:70px;">
+                    2020-12-31
+				</div>
+            </div>
         </div>
     </div>
-    <!--  -->
+    <!-- 分页 -->
     <div class="pagination">
         <el-pagination
         :page-size="8"
@@ -52,13 +73,29 @@
 
 <script>
 export default {
-    name:'FrontPage'
+    name:'FrontPage',
+    data() {
+        return {
+            blog:[],
+            titleBlog:''
+        }
+    },
+    mounted(){
+        // this.$axios.get('http://localhost:8080/blog/')
+        // .then(res=>{
+        //     this.blog=res.data
+        // },
+        // error=>{
+        //     console.log(error.message);
+        // })
+    }
 }
 </script>
 
 <style scoped>
 .searchBar{
     position: relative;
+    width: 460px;
     left: 450px;
     top: -35px;
 }
@@ -117,7 +154,19 @@ export default {
     width: 1000px;
     height: 920px;
 }
-
+.blogExhibit div{
+    margin: 30px;
+	height: 120px;
+    border-bottom: 1px solid bisque;
+}
+.blogExhibit div div{
+    margin: 0px;
+    border: 0;
+}
+.false1{
+	/* text-align: center; */
+    font-size: 22px;
+}
 .pagination{
     position: relative;
     left: 460px;

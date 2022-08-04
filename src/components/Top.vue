@@ -4,9 +4,11 @@
 			<div style="width:100px;height:100%;">
 				<router-link to='/frontPage' style="color:white">主页</router-link>
 			</div>
+			<div class="logo"><img src="" alt=""></div>
+			<!-- <div class="greet">欢 迎 您 使 用</div> -->
 			<div class="login" style="width:190px;height:100%;">
 				<div v-if="!isLogin" style="font-size:18px">
-					<span style="cursor: pointer;">游客登录</span>
+					<span style="cursor: pointer;" @click="touristsLogin">游客登录</span>
 					<span style="color:black"> / </span>
 					<router-link to="/login" style="color:white">登录</router-link>
 					<span style="color:black"> / </span>
@@ -18,9 +20,14 @@
 							我的<i class="el-icon-arrow-down el-icon--right"></i>
 						</span>
 						<el-dropdown-menu slot="dropdown" style="color:black;">
-							<el-dropdown-item>发布</el-dropdown-item>
-							<el-dropdown-item>个人中心</el-dropdown-item>
-							<el-dropdown-item>
+							<!-- <el-dropdown-item v-if="!isTourist">发布</el-dropdown-item> -->
+							<el-dropdown-item v-if="!isTourist">
+								<router-link to="/editing">发布</router-link>
+							</el-dropdown-item>
+							<el-dropdown-item v-if="!isTourist">
+								<router-link to="/personalcenter">个人中心</router-link>
+							</el-dropdown-item>
+							<el-dropdown-item v-if="!isTourist">
 								<router-link to="/setting">设置</router-link>	
 							</el-dropdown-item>
 							<el-dropdown-item ><span @click="loginOut">退出登录</span></el-dropdown-item>
@@ -38,19 +45,30 @@ import {mapState ,mapGetters,mapActions,mapMutations} from 'vuex'
 		name:'Top',
 		data() {
       		return {
-				// isLogin:this.user.isLogin,
       		};
     	},
     	methods: {
+			// 退出登录
       		loginOut(){
-				this.isLogin=false
-				this.$store.commit('UPDATAISLOGIN',this.isLogin)
+				this.$store.commit('userOptions/UPDATAISLOGIN',false)
+				this.$store.commit('userOptions/TOURISTS',false)
+				// this.$store.commit('userOptions/')
+			},
+			touristsLogin(){
+				let sure=confirm(`确定以游客身份登录吗？若以游客身份登录，本网站不会记录您的所有信息，网站部分功能将不会对您开放`)
+				if(sure){
+					this.$store.commit('userOptions/UPDATAISLOGIN',true)
+					this.$store.commit('userOptions/TOURISTS',true)
+				}
 			}
     	},
 		computed:{
 			// ...mapState({user:'user'})
 			isLogin(){
-				return this.$store.state.user.isLogin
+				return this.$store.state.userOptions.user.isLogin
+			},
+			isTourist(){
+				return this.$store.state.userOptions.user.isTouristsLogin
 			}
 		}
 	}
@@ -71,6 +89,20 @@ div{
 	line-height: 70px;
 	color: white;
 }
+.greet{
+	position: absolute;
+	top: 0;
+	left: 580px;
+}
+.logo{
+	position: absolute;
+	top: 0;
+	left: 350px;
+}
+.logo img{
+	height: 70px;
+	width: 140px;
+}
 .login{
 	position:absolute;
 	top: 0;
@@ -89,5 +121,8 @@ div{
 
 .el-icon-arrow-down {
     font-size: 12px;
+}
+a:hover{
+	color: rgb(197, 120, 32);
 }
 </style>

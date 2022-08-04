@@ -7,7 +7,7 @@ import router from './router'
 import {Menu,Submenu,MenuItem,Button,Input,Form,FormItem,
 	Pagination,Carousel,CarouselItem,
 	Dropdown,DropdownMenu,DropdownItem,
-	Avatar,DatePicker
+	Avatar,DatePicker,Upload,Badge
 } from 'element-ui'
 
 Vue.use(VueRouter)
@@ -30,6 +30,12 @@ Vue.use(DropdownMenu)
 Vue.use(DropdownItem)
 Vue.use(Avatar)
 Vue.use(DatePicker)
+Vue.use(Upload)
+Vue.use(Badge)
+// Vue.use(Breadcrumb)
+// Vue.use(BreadcrumbItem)
+
+
 
 new Vue({
 	el:"#app",

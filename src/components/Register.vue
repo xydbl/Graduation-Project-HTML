@@ -113,6 +113,7 @@ export default {
             date1:new Date()
           }
         ).then(res=>{
+          this.$router.push({path:'/login'})
           alert('注册成功')
         },error=>{
           alert('注册失败')
@@ -127,10 +128,13 @@ export default {
 <style scoped>
 .resgit{
   position: relative;
-  left: 950px;
-  height: 350px;
-  width: 400px;
+  top: 150px;
+  left: 600px;
+  height: 400px;
+  width: 420px;
   text-align: right;
+  padding-right: 40px;
+  box-shadow: 4px 4px 15px #666;
 }
 input{
   height: 40px;
