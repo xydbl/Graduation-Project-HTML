@@ -14,8 +14,17 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
 export default {
-    name:'Audit'
+    name:'Audit',
+    props:['bid'],
+    methods: {
+      ...mapMutations('commentaryOptions',{auditCbid:'AUDITCBID'}),
+    },
+    mounted() {
+      // console.log(this.bid);
+      this.auditCbid(this.bid)
+    },
 }
 </script>
 

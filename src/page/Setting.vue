@@ -10,7 +10,7 @@
       <div class="usrMsg">
         <!-- 头像 -->
         <div class="avatar">
-          <router-link to="/setting/uploadimage" @click="uploadImg">
+          <router-link to="/setting/uploadimage">
             <el-avatar src="../assets/logo.png" style="width:70px;height:70px; position:relative;top:-50px;left:10px; float:left;">
             </el-avatar>
           </router-link>
@@ -64,8 +64,12 @@ export default {
       // 修改完成
       finishSig(){
         this.isSig=false
-        axios.post('http:/localhost:8080/user',{})
+        axios.post('http://localhost:8081/api/user/updateUserById',{
+          uid:this.usMsg.uid,
+          signature:this.signature
+        })
         .then(res=>{
+          this.$store.commit('userOptions/UPDATEUSERMESSAGE')
         },
         error=>{
           console.log(error.message);

@@ -4,7 +4,7 @@
     
     <!-- 搜索 -->
     <div class="searchBar">
-        <input type="text" style="height:36px;width:360px;" placeholder="请输入要搜索的内容">
+        <input type="text" style="height:36px;width:360px;" placeholder="请输入要搜索的内容" v-model="search">
         <el-button type="primary" icon="el-icon-search">搜索</el-button>
         <!-- <el-button icon="el-icon-search" circle></el-button> -->
     </div>
@@ -37,26 +37,25 @@
             <h2 style="position:relative;left:20px">news</h2>
         </div>
         <div class="blogExhibit">
-            <div>
-                <router-link to="/blog">
+            <div v-for="list in blogList" :key="list.bid">
+                <router-link :to="{
+                    path:'/blog',
+                    query:{
+                        bid:list.bid,
+                        btitle:list.btitle,
+                        btype:list.btype,
+                        bcontent:list.bcontent,
+                        btime:list.btime
+                    }
+                }">
                     <img src="" style="width:160px;height:90px;">
                     <div class="false1" style="height: 90px;width: 600px; position: relative;left: 170px;top: -94px;;">
-                        <strong>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                            xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</strong>
+                        <strong>{{list.btitle}}</strong>
                     </div>
                     <div style="position: relative;left:780px;width:160px;top:-185px;height:90px;text-align:center;line-height:70px;">
-                        2022-01-02
+                        {{list.btime}}
                     </div>
                 </router-link>
-            </div>
-            <div>
-                <img src="" style="width:160px;height:90px;">
-                <div class="false1" style="height: 90px;width: 600px; position: relative;left: 170px;top: -94px;;">
-                    <strong>xxccccccccssssszzzxxxxxxxxx</strong>
-                </div>
-				<div style="position: relative;left:780px;width:160px;top:-185px;height:90px;text-align:center;line-height:70px;">
-                    2020-12-31
-				</div>
             </div>
         </div>
     </div>
@@ -72,22 +71,51 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
     name:'FrontPage',
     data() {
         return {
-            blog:[],
-            titleBlog:''
+            blogList:[],
+            titleBlog:'',
+            search:''
         }
     },
+    methods: {
+        // 加载
+        getBlogList(){
+            this.$axios.get("http://localhost:8081/api/blog/findAll")
+            .then(res=>{
+                this.blogList= res.data
+            },error=>{
+                console.log(error.message);
+            })
+        }
+        // 搜索
+        // SearchBlog(){
+        //     this.$axios.get('http://localhost:8081/api/')
+        //     .then(res=>{
+        //         this.blog=res.data
+        //     },
+        //     error=>{
+        //         console.log(error.message);
+        //     })
+        // }
+
+        // 按类型搜索
+    },
     mounted(){
-        // this.$axios.get('http://localhost:8080/blog/')
+        this.getBlogList()
+        // this.$axios.get('http://localhost:8081/api/blog/')
         // .then(res=>{
         //     this.blog=res.data
         // },
         // error=>{
         //     console.log(error.message);
         // })
+    },
+    computed:{
+        ...mapState('blogOptions',{myBlogList:'myBlogList'})
     }
 }
 </script>

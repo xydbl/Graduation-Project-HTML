@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="block">
+    <!-- <div class="block">
       <span>请输入昵称</span><br>
       <input type="text" v-model="nickname">
     </div>
@@ -15,7 +15,7 @@
     <div class="block">
         <span>请输入手机号</span><br>
         <input type="text" v-model="phone">
-    </div>
+    </div> -->
     <div>
         <template>
             <div class="block">
@@ -30,7 +30,7 @@
         </template>
     </div>
     <div class="block">
-      <button @click="setFinish">完成</button>
+      <button @click="setFinish">修改/完成</button>
     </div>
   </div>
 </template>
@@ -41,20 +41,17 @@ export default {
     name:'PersonalInformation',
     data() {
       return {
-        nickname:'',
-        signature:'',
-        email:"",
-        phone:"",
+        // nickname:'',
+        // signature:'',
+        // email:"",
+        // phone:"",
         birthday: '',
       };
     },
     methods: {
       setFinish(){
-        axios.post('http://localhost:8080/user/',{
-          nickname:this.nickname,
-          signature:this.signature,
-          email:this.email,
-          phone:this.phone,
+        axios.post('http://localhost:8080/user/updateUserById',{
+          uid:this.uMsg.uid,
           birthday:this.birthday
         }).then(res=>{
           alert('完成')
@@ -64,6 +61,11 @@ export default {
         })
       }
     },
+    computed:{
+      uMsg(){
+        return this.$store.state.userOptions.user
+      }
+    }
 }
 </script>
 

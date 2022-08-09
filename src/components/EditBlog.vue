@@ -5,40 +5,111 @@
 			<span>请输入标题：</span><br>
 			<span>类型：</span><br>
 			<span>请选择封面：</span><br>
-			<span>内容：</span>
+			<span class="bcontent">内容：</span>
+		</div>
+		<div style="position: absolute; right:30px;top:20px">
+			<button class="btn" @click="editFinish">修改完成</button>
 		</div>
 		<div class="right">
+			
 			<input type="text" class="titleIn" v-model="title"><br>
-			<select name="" class="stype" v-model="type">
+			<!-- <select name="" class="stype" v-model="type">
 				<option value="">xxxx</option>
-			</select><br>
-			<input type="file" class="checkImg" accept=".png, .jpg, .jpeg"><br>
-			<textarea v-model="content" cols="60" rows="20" class="ptext"></textarea>
-			<button class="btn">修改完成</button>
+			</select><br> -->
+			<input type="text" v-model="type" class="ipt">
+			<!-- <input type="file" class="checkImg" accept=".png, .jpg, .jpeg"><br> -->
+			<div class="updateBlogImage">
+				<el-upload
+					class="upload-demo" 
+					drag 
+					action="" 
+					:http-request="updateBlogImg" 
+					:limit="1" 
+					multiple>
+					<img v-if="img" :src="require('../assets/blogimage/'+img)">
+					<i v-else class="el-icon-upload"></i>
+					<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+					<div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过10M</div>
+				</el-upload>
+			</div>
+			<div class="mavonEditor">
+				<mavon-editor v-model="content" />
+			</div>
 		</div>
 	</div>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
     name:'EditBlog',
     data() {
 		return {
-			title:'',
-			type:'',
-			content:'',
+			title:this.btitle,
+			type:this.btype,
+			content:this.bcontent,
+			img:this.bimg,
       //  修改时间
 			newTime:new Date()
 		}
 	},
+	props:['bid','btitle','btype','bimg','bcontent'],
+	methods: {
+		updateBlogImg(params){
+			let file=params.file
+			let index=file.name.lastIndexOf(".")
+			let extension=file.name.substr(index+1)
+			let extensionList=["png","PNG","jpg","JPG","jpeg","JPEG"]
+			const isLimit=file.size / 1024 / 1024 < 10;
+			if(!isLimit){
+				alert("文件大小超过10M")
+			}else if(extensionList.indexOf(extension)<0){
+				alert("文件格式不支持")
+			}else{
+				let obj=new FormData()
+				obj.append('file',file)
+				obj.append('bid',this.bid)
+				this.$axios({
+					method:'post',
+					url:'http://localhost:80881/api/blog/uploadInEdit',
+					data:obj
+				}).then(res=>{
+					this.img=res.data.bimage
+					// sessionStorage.setItem('isEdit',JSON.stringify(res.data))
+				},error=>{
+					console.log(error.message);
+				})
+			}
+		},
+		editFinish(){
+			this.$axios.post('http://localhost:8081/api/blog/save',{
+				bid:this.bid,
+				btitle:this.title,
+				btype:this.type,
+				bcontent:this.content
+			}).then(res=>{
+				// res.data
+				this.$router.back()
+			},error=>{
+				console.log(error.message);
+			})
+		}
+	},
+	computed:{
+		...mapState('userOptions',{user:'user'})
+	},
+	mounted(){
+		// let isEdit=sessionStorage.getItem('isEdit')
+		// if(isEdit!='')
+	}
 }
 </script>
 
 <style scoped>
 .editing{
-	width: 600px;
-	height: 700px;
+	width: 1200px;
+	height: 800px;
 	position: relative;
 	left: 40px;
 	border: 1px solid silver;
@@ -54,7 +125,7 @@ export default {
 }
 .right{
 	position: relative;
-	width: 350px;
+	width: 950px;
 	height: 500px;
 	top: -440px;
 	left: 160px;
@@ -67,31 +138,43 @@ span{
 	margin: 10px;
 	line-height: 40px;
 }
-.titleIn{
+.titleIn,.ipt{
 	border-top: 0;
 	border-left: 0;
 	border-right: 0;
 	border-bottom: 1px solid darkgrey;
 	/* border: 0; */
+	margin-top: 5px;
 	outline: none;
 }
-.stype{
+.updateBlogImage{
+	margin-top: 30px;
+}
+.bcontent{
+	position: relative;
+	top: 210px;
+}
+.mavonEditor{
+	margin-top: 30px;
+}
+/* .stype{
 	position: relative;
 	top: 21px;
 	height: 30px;
 	width: 70px;
-}
-.checkImg{
+} */
+/* .checkImg{
 	position: relative;
 	top: 40px;
-}
-.ptext{
+} */
+/* .ptext{
 	position: relative;
 	top: 50px;
-}
+} */
 .btn{
 	position: relative;
-	top: 60px;
+	/* top: 60px; */
+	/* left: 700px; */
 	width: 80px;
 	height: 30px;
 }

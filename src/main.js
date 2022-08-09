@@ -9,6 +9,10 @@ import {Menu,Submenu,MenuItem,Button,Input,Form,FormItem,
 	Dropdown,DropdownMenu,DropdownItem,
 	Avatar,DatePicker,Upload,Badge
 } from 'element-ui'
+// mavon-editor 引入
+import mavonEditor from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
+Vue.use(mavonEditor)
 
 Vue.use(VueRouter)
 

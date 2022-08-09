@@ -110,7 +110,8 @@ export default {
             username:this.user.userName,
             password:this.user.passWord,
             usertype:this.user.userType,
-            date1:new Date()
+            date1:new Date(),
+            islogin:0
           }
         ).then(res=>{
           this.$router.push({path:'/login'})

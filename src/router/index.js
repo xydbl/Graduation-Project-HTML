@@ -44,7 +44,16 @@ const router= new VueRouter({
         // 博客页面
         {
             path:'/blog',
-            component:Blog
+            component:Blog,
+            props($route){
+                return{
+                    bid:$route.query.bid,
+                    btitle:$route.query.btitle,
+                    btype:$route.query.btype,
+                    bcontent:$route.query.bcontent,
+                    btime:$route.query.btime
+                }
+            }
         },
         // 用户查看博主信息
         {
@@ -55,12 +64,13 @@ const router= new VueRouter({
         {
             path:'/setting',
             component:Setting,
+            meta:{isAuth:true},
             children:[
                 // 上传用户图片
                 {
                     path:'uploadimage',
                     component:UploadImage,
-                    meta:{isAuth:true},
+                    meta:{isAuth:true}
                 },
                 {
                     path:'accountSetting',
@@ -70,13 +80,13 @@ const router= new VueRouter({
                     children:[{
                         path:'settingPassWord',
                         component:SettingPassWord,
-                        meta:{isAuth:true},
+                        meta:{isAuth:true}
                     }]
                 },
                 {
                     path:'personalInformation',
                     component:PersonalInformation,
-                    meta:{isAuth:true},
+                    meta:{isAuth:true}
                 }
             ]
         },
@@ -84,7 +94,7 @@ const router= new VueRouter({
         {
             path:'/editing',
             component:Editing,
-            meta:{isAuth:true},
+            meta:{isAuth:true}
         },
         // 个人中心
         {
@@ -96,29 +106,43 @@ const router= new VueRouter({
                 {
                     path:'pushblog',
                     component:MyPushBlog,
-                    meta:{isAuth:true},
+                    meta:{isAuth:true}
                 },
                 // 修改博客
                 {
                     path:'editblog',
                     component:EditBlog,
                     meta:{isAuth:true},
+                    props($route){
+                        return {
+                            bid:$route.query.bid,
+                            btitle:$route.query.btitle,
+                            btype:$route.query.btype,
+                            bimg:$route.query.bimage,
+                            bcontent:$route.query.bcontent
+                        }
+                    }
                 },
                 //  审核评论
                 {
                     path:'audit',
                     component:Audit,
                     meta:{isAuth:true},
+                    props($route){
+                        return {
+                            bid:$route.query.bid,
+                        }
+                    },
                     children:[
                         {
                             path:'approved',
                             component:Approved,
-                            meta:{isAuth:true},
+                            meta:{isAuth:true}
                         },
                         {
                             path:'notApproved',
                             component:NotApproved,
-                            meta:{isAuth:true},
+                            meta:{isAuth:true}
                         }
                     ]
                 },
@@ -126,7 +150,7 @@ const router= new VueRouter({
                 {
                     path:'history',
                     component:HistoryRecord,
-                    meta:{isAuth:true},
+                    meta:{isAuth:true}
                 }
             ]
         }
@@ -134,14 +158,30 @@ const router= new VueRouter({
 })
 router.beforeEach((to, from, next) => {
     // to and from are both route objects. must call `next`.
-    // if(to.meta.isAuth){
-    //     // if
-    // }
-    next()
+    if(to.meta.isAuth){
+        if(localStorage.getItem('username')!=''&&
+        localStorage.getItem('username')!=null&&
+        localStorage.getItem('isLoginOut')!='false'){
+            next()
+        }else{
+            alert('权限不足')
+        }
+    }else{
+       next() 
+    }
+    
 })
 
 router.afterEach((to, from) => {
     // to and from are both route objects.
-    window.scrollTo(0,0)
+    if(from.fullPath=='/editing'){
+        sessionStorage.setItem('editing','')
+    }
+    if(to.fullPath=='/setting/accountSetting'&&from.fullPath=='/setting/accountSetting/settingPassWord'){
+    }else if(to.fullPath=='/setting/accountSetting/settingPassWord'&&from.fullPath=='/setting/accountSetting'){    
+    }
+    else{
+        window.scrollTo(0,0)
+    }
 })
 export default router

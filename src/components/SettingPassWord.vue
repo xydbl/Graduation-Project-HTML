@@ -82,4 +82,8 @@ input{
 span{
     margin-top: 10px;
 }
+button{
+    /* margin-top: 5px; */
+    height: 34px;
+}
 </style>

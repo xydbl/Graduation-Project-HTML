@@ -50,9 +50,20 @@ import {mapState ,mapGetters,mapActions,mapMutations} from 'vuex'
     	methods: {
 			// 退出登录
       		loginOut(){
+				if (this.isLogin==true&&this.isTourist==false) {
+					this.$axios.post('http://localhost:8081/api/user/updateUserById',{
+						uid:this.user.uid,
+						islogin:0
+					}).then(res=>{
+					},error=>{
+						console.log(error.message);
+					})
+				}
 				this.$store.commit('userOptions/UPDATAISLOGIN',false)
 				this.$store.commit('userOptions/TOURISTS',false)
 				// this.$store.commit('userOptions/')
+				this.$router.push({path:'/frontPage'})
+				localStorage.setItem('isLoginOut',false)
 			},
 			touristsLogin(){
 				let sure=confirm(`确定以游客身份登录吗？若以游客身份登录，本网站不会记录您的所有信息，网站部分功能将不会对您开放`)
@@ -63,7 +74,7 @@ import {mapState ,mapGetters,mapActions,mapMutations} from 'vuex'
 			}
     	},
 		computed:{
-			// ...mapState({user:'user'})
+			...mapState('userOptions',{user:'user'}),
 			isLogin(){
 				return this.$store.state.userOptions.user.isLogin
 			},

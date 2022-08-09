@@ -30,8 +30,9 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
-    name:'PersonalCenter'
+    name:'PersonalCenter',
 }
 </script>
 
@@ -57,7 +58,7 @@ export default {
 	position: absolute;
 	left: 350px;
 	top: 0px;
-	width: 918px;
+	width: 1300px;
 	height: 700px;
 	border-left: 2px solid sandybrown;
 }

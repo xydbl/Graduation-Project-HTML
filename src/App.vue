@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="">
     <div class="topPage">
       <Top></Top>
     </div>
@@ -7,9 +7,9 @@
     <div class="primaryPage">
       <Primary></Primary>
     </div>
-    <div class="footPage">
+    <!-- <div class="footPage">
       <BottomDisplay></BottomDisplay>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -25,10 +25,47 @@ export default {
     Primary,
     BottomDisplay
   },
+  mounted(){
+   let isLoginOut=null
+   if (localStorage.getItem('isLoginOut')==null) {
+    isLoginOut=false
+   }else{
+    isLoginOut=localStorage.getItem('isLoginOut')
+   }
+   
+   let username=null
+   if (localStorage.getItem('username')==null) {
+    username=''
+   }else{
+    username=localStorage.getItem('username')
+   }
+   
+   if(isLoginOut!='false'&&username!=''){
+    
+    this.$axios.get(`http://localhost:8081/api/user/findByUserName/${username}`)
+    .then(res=>{
+      let x=new Date(res.data.logintime).getTime()/1000/60/60/24
+      let y=+new Date()/1000/60/60/24
+      if(y-x<7){
+        this.$store.commit('userOptions/UPDATAISLOGIN',true)
+        this.$store.commit('userOptions/UPDATAUSER',res.data)
+      }else{
+        this.$store.commit('userOptions/UPDATAISLOGIN',false)
+        localStorage.setItem('username','')
+      }
+    },error=>{
+      console.log(error.message);
+    })
+   }
+  }
 }
 </script>
 
 <style>
+*{
+  margin: 0;
+  padding: 0;
+}
 .primaryPage{
   position: relative;
   top: 70px;
@@ -39,10 +76,11 @@ a{
   color: #000;
 }
 .footPage{
-  width: 100%;
+  width: 1600px;
   height: 80px;
   position: relative;
   background-color: rgb(140, 136, 136);
-  top: 860px;
+  bottom: 0;
 }
+
 </style>

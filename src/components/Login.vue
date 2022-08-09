@@ -11,7 +11,8 @@
 			<input type="text" name="msg" v-model="msg">
 			<div @click="getIdentifyCode" style="position: absolute;top: 16px;right: 10px;width: 120px;
 			height: 40px;font-size: 20px;text-align: center;line-height: 40px;cursor: pointer;">
-				<span>{{identifyCode}}</span>
+				<!-- <span>{{identifyCode}}</span> -->
+				<canvas ref="verify" style="cursor: pointer;" :width="width" :height="height"></canvas>
 			</div>
 			<br>
 		</div>
@@ -38,7 +39,9 @@ import {mapState ,mapGetters,mapActions,mapMutations} from 'vuex'
 					remember:false,
 				},
 				msg:'',
-				identifyCode:''
+				identifyCode:'',
+				width:120,
+				height:40
 			}
 		},
 		methods: {
@@ -47,17 +50,22 @@ import {mapState ,mapGetters,mapActions,mapMutations} from 'vuex'
 					this.$axios.post('http://localhost:8080/user/login',{
 						username:this.user.userName,
 						password:this.user.passWord,
+						logintime:new Date()
 					})
 					.then(res=>{
 						// 记住用户名
 						if(this.user.remember){
 							localStorage.setItem('username',this.user.userName)
+							localStorage.setItem('isLoginOut',true)
+							localStorage.setItem('remember',true)
 						}else{
 							localStorage.setItem('username','')
+							localStorage.setItem('remember',false)
 						}
 						const usrlon=true
 						this.$store.commit('userOptions/UPDATAISLOGIN',usrlon)
 						this.$store.commit('userOptions/UPDATAUSER',res.data)
+						// console.log(res.data);
 						this.$store.commit('userOptions/TOURISTS',false)
 						this.$router.push({path:'/frontPage'})
 						// this.$router.push({path:redirect})
@@ -79,11 +87,14 @@ import {mapState ,mapGetters,mapActions,mapMutations} from 'vuex'
 				this.$axios.get('http://localhost:8080/user/captcha')
 				.then(res=>{
 					this.identifyCode=res.data
+					this.$nextTick(function(){
+						this.draw()
+					})
 				},
 				error=>{
 					console.log(error.message);
 				})
-			}
+			},
 			// getUserMessage(username){
 			// 	axios.get(`http://localhost:8080/user/${username}`)
 			// 	.then(res=>{
@@ -92,15 +103,56 @@ import {mapState ,mapGetters,mapActions,mapMutations} from 'vuex'
 			// 	error=>{
 			// 		console.log(error.message);
 			// 	})
-			// }
+			// },
+			// 删除随机数
+			randomNum(min,max){
+				return parseInt(Math.random() * (max-min) +min)
+			},
+			// 生成随机颜色
+			randomColor(min,max){
+				const r=this.randomNum(min,max)
+				const g=this.randomNum(min,max)
+				const b=this.randomNum(min,max)
+				return `rgb(${r},${g},${b})`
+			},
+			draw(){
+				let imgCode=''
+				let bcolor=this.$refs.verify.getContext('2d')
+				bcolor.fillStyle=this.randomColor(180,230)
+				bcolor.fillRect(0,0,this.width,this.height)
+				for (let i = 0; i <this.identifyCode.length ; i++) {
+					imgCode+=this.identifyCode[i]
+					const fontsize=this.randomNum(18,40)
+					const deg=this.randomNum(-30,30)
+					bcolor.font=fontsize+'px Simhei'
+					bcolor.textBaseline='top'
+					bcolor.fillStyle=this.randomColor(80,150)
+					bcolor.save()
+					bcolor.translate(30*i +15,15)
+					bcolor.rotate((deg * Math.PI)/180)
+					bcolor.fillText(this.identifyCode[i],-15+5,-15)
+					bcolor.restore()
+				}
+				// 生成干扰线
+				for (let i = 0; i < 5; i++) {
+					bcolor.beginPath()
+					bcolor.moveTo(this.randomNum(0,this.width),this.randomNum(0,this.height))		
+					bcolor.lineTo(this.randomNum(0,this.width),this.randomNum(0,this.height))
+					bcolor.strokeStyle=this.randomColor(180,230)
+					bcolor.closePath()
+					bcolor.stroke()		
+				}
+				return imgCode
+			}
 		},
 		mounted(){
-			// 验证码
-			this.getIdentifyCode()
-
+			// 记住用户名
 			if(localStorage.getItem('username')){
 				this.user.userName=localStorage.getItem('username')
+				this.user.remember= localStorage.getItem('remember')
 			}
+			// 验证码
+			this.getIdentifyCode()
 		}
 	}
 </script>
