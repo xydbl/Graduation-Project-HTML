@@ -1,4 +1,4 @@
-list.<template>
+<template>
     <div>
         <input type="text" class="search" v-model="msg" @keyup.enter="searchName">
         <el-button type="primary" icon="el-icon-search" @click="searchName">用户名搜索</el-button>

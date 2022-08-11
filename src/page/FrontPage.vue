@@ -4,8 +4,8 @@
     
     <!-- 搜索 -->
     <div class="searchBar">
-        <input type="text" style="height:36px;width:360px;" placeholder="请输入要搜索的内容" v-model="search">
-        <el-button type="primary" icon="el-icon-search">搜索</el-button>
+        <input type="text" style="height:36px;width:360px;" placeholder="请输入要搜索的内容" v-model="search" @keyup.enter="SearchBlog">
+        <el-button type="primary" icon="el-icon-search" @click="SearchBlog">搜索</el-button>
         <!-- <el-button icon="el-icon-search" circle></el-button> -->
     </div>
     <!-- 轮播图 -->
@@ -39,15 +39,15 @@
         <div class="blogExhibit">
             <div v-for="list in blogList" :key="list.bid">
                 <router-link :to="{
-                    path:'/blog',
-                    query:{
+                    name:'blog',
+                    params:{
                         bid:list.bid,
                         btitle:list.btitle,
                         btype:list.btype,
                         bcontent:list.bcontent,
                         btime:list.btime
                     }
-                }">
+                }" >
                     <img src="" style="width:160px;height:90px;">
                     <div class="false1" style="height: 90px;width: 600px; position: relative;left: 170px;top: -94px;;">
                         <strong>{{list.btitle}}</strong>
@@ -90,22 +90,29 @@ export default {
             },error=>{
                 console.log(error.message);
             })
-        }
+        },
+        listManage(){
+            this.blogList.forEach(li=>{
+                li.btime=new Date(li.btime).getFullYear()
+            })
+        },
         // 搜索
-        // SearchBlog(){
-        //     this.$axios.get('http://localhost:8081/api/')
-        //     .then(res=>{
-        //         this.blog=res.data
-        //     },
-        //     error=>{
-        //         console.log(error.message);
-        //     })
-        // }
-
+        SearchBlog(){
+            this.$axios.get(`http://localhost:8081/api/blog/findLike/${this.search}`)
+            .then(res=>{
+                console.log(res.data);
+            },
+            error=>{
+                console.log(error.message);
+            })
+        }
         // 按类型搜索
     },
     mounted(){
         this.getBlogList()
+        setInterval(() => {
+            this.listManage()
+        }, 1000);
         // this.$axios.get('http://localhost:8081/api/blog/')
         // .then(res=>{
         //     this.blog=res.data

@@ -60,7 +60,7 @@ const userOptions={
         },
         // 获取当前博客博主信息
         GETBLOGUSERMESSAGE(state,value){
-            axios.get(`http://localhost:8081/api/blog/findUserByUid/${value}`)
+            axios.get(`http://localhost:8081/api/blog/findUserByBid/${value}`)
             .then(res=>{
                 state.blogUser= res.data
             },
@@ -118,6 +118,13 @@ const blogOptions={
             state.myBlogList.forEach(li => {
                 li.btime=new Date(li.btime).getFullYear()
             });
+        },
+        // 正在查看的博客
+        CURRENTBLOG(state,value){
+            axios.get(`http://localhost:8081/api/blog/findByBid/${value}`)
+            .then(res=>{
+                state.blog= res.data
+            })
         }
     },
     state:{
@@ -125,6 +132,8 @@ const blogOptions={
         blogList:[],
         // 我的博客列表
         myBlogList:[],
+        // 正在查看的博客
+        blog:[],
         // 正在创建 编辑的blog的id
         bid:'',
         blogOne:{}
@@ -138,11 +147,25 @@ const commentaryOptions={
     mutations:{
         AUDITCBID(state,value){
             state.cbid=value
-        }
+        },
+        // 查看当前博客的所有评论
+        CURRENTCOMMENTARY(state,value){
+            axios.get(`http://localhost:8081/api/commentary/findById/${value}`)
+            .then(res=>{
+                state.commentaryList=res.data
+            },error=>{
+                console.log(error.message);
+            })
+        },
     },
     state:{
         // 审核评论所属的博客
         cbid:'',
+        // 当前查看博客的评论列表
+        commentaryList:[],
+        // 当前博客通过审核的评论
+        // approvedCommentaryList:[]
+        // 为通过审核的评论
     },
     getters:{}
 }

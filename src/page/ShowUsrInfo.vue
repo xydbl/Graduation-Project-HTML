@@ -1,31 +1,69 @@
 <template>
   <div class="uInfo">
     <div class="left">
-        <img src="../assets/logo.png" alt=""><br>
-        <span>昵称:</span><br><br>
-        <span style="font-size: 14px; opacity: .5;">注册时间:2020-14-17</span>
+        <img :src="require('../assets/userimage/'+blogUser.image)" alt=""><br>
+        <span>昵称:{{blogUser.username}}</span><br><br>
+        <span style="font-size: 14px; opacity: .5;">注册时间:{{blogUser.date1}}</span>
     </div>
 	<div class="right">
 		<h2>他发布的博客</h2>
 		<hr>
-		<div class="btble">
-			<router-link to="/blog">
+		<div class="btble" v-for="list in myBlogList" :key="list.bid" >
+			<router-link :to="{
+                name:'blog',
+                params:{
+                    bid:list.bid,
+                    btitle:list.btitle,
+                    btype:list.btype,
+                    bcontent:list.bcontent,
+                    btime:list.btime
+                }
+            }">
                 <img src="" style="width:160px;height:90px;">
                 <div style="position: absolute;left: 170px;top: 0;height: 90px;width: 420px;">
-                    <strong style="font-size: 22px;">xxxxx</strong>
+                    <strong style="font-size: 22px;">{{list.btitle}}</strong>
                 </div>
                 <div style="position: absolute;top: 0;left: 600px;height: 90px;width: 150px;text-align: center;line-height: 60px;">
-                    2020-11-4
+                    {{list.btime}}
                 </div>
             </router-link>
 		</div>
+        
 	</div>
   </div>
 </template>
 
 <script>
+import { mapMutations, mapState } from 'vuex'
 export default {
-    name:'ShowUsrInfo'
+    name:'ShowUsrInfo',
+    props:['username','uid','image'],
+    data() {
+        return {
+        }
+    },
+    methods: {
+        ...mapMutations('userOptions',{getBlogUserMessage:'GETBLOGUSERMESSAGE'}),
+        ...mapMutations('blogOptions',{getMyBlogList:'GETMYBLOGLIST',setMyBlogListTime:'SETMYBLOGLISTTIME'})
+    },
+    computed:{
+        ...mapState('userOptions',{blogUser:'blogUser'}),
+        ...mapState('blogOptions',{myBlogList:'myBlogList'})
+    },
+    mounted(){
+        let uid=sessionStorage.getItem("uid")
+        if(uid==null||uid==''){
+            sessionStorage.setItem('uid',this.uid)
+            this.getBlogUserMessage(this.uid)
+            this.getMyBlogList(this.uid)
+        }else{
+            this.getBlogUserMessage(uid)
+            this.getMyBlogList(uid)
+        }
+        setTimeout(() => {
+            this.setMyBlogListTime()
+        }, 200);
+    }
 }
 </script>
 

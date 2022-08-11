@@ -20,21 +20,21 @@
                 <td>11111</td>
                 <td>
                     <router-link :to="{
-                        path:'/personalcenter/audit',
-                        query:{
+                        name:'notApproved',
+                        params:{
                             bid:list.bid
                         }
                     }">审核评论 </router-link>
 					<router-link :to="{
-                        path:'/personalcenter/editblog',
-                        query:{
+                        name:'editblog',
+                        params:{
                             bid:list.bid,
                             btitle:list.btitle,
                             btype:list.btype,
                             bimage:list.bimage,
                             bcontent:list.bcontent
                         }
-                    }">
+                    }" >
                         <i class="el-icon-edit" circle style="background-color: #E3E7EB;border: 0;color: black;"></i>
                     </router-link>
 					<i class="el-icon-delete" circle style="background-color: #E3E7EB;border: 0;color: red; cursor: pointer;" @click="delBlog(list.bid)"></i>
@@ -76,13 +76,13 @@ export default {
                 })
                 .then(res=>{
                     this.getMyBlogList(this.user.uid)
-                    console.log(res.data);
+                    // console.log(res.data);
                 },
                 error=>{
                     console.log(error.message);
                 })
             }
-        }
+        },
     },
     computed:{
         ...mapState('userOptions',{user:'user'}),

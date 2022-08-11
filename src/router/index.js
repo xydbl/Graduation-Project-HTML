@@ -43,22 +43,31 @@ const router= new VueRouter({
         },
         // 博客页面
         {
+            name:'blog',
             path:'/blog',
             component:Blog,
             props($route){
                 return{
-                    bid:$route.query.bid,
-                    btitle:$route.query.btitle,
-                    btype:$route.query.btype,
-                    bcontent:$route.query.bcontent,
-                    btime:$route.query.btime
+                    bid:$route.params.bid,
+                    btitle:$route.params.btitle,
+                    btype:$route.params.btype,
+                    bcontent:$route.params.bcontent,
+                    btime:$route.params.btime
                 }
             }
         },
         // 用户查看博主信息
         {
             path:'/showUsr',
-            component:ShowUsrInfo
+            name:'showUsr',
+            component:ShowUsrInfo,
+            props($route){
+                return{
+                    uid:$route.params.uid,
+                    username:$route.params.username,
+                    image:$route.params.image
+                }
+            }
         },
         // 设置
         {
@@ -110,39 +119,43 @@ const router= new VueRouter({
                 },
                 // 修改博客
                 {
+                    name:'editblog',
                     path:'editblog',
                     component:EditBlog,
                     meta:{isAuth:true},
                     props($route){
                         return {
-                            bid:$route.query.bid,
-                            btitle:$route.query.btitle,
-                            btype:$route.query.btype,
-                            bimg:$route.query.bimage,
-                            bcontent:$route.query.bcontent
+                            bid:$route.params.bid,
+                            btitle:$route.params.btitle,
+                            btype:$route.params.btype,
+                            bimg:$route.params.bimage,
+                            bcontent:$route.params.bcontent
                         }
                     }
                 },
                 //  审核评论
                 {
+                    name:'audit',
                     path:'audit',
                     component:Audit,
                     meta:{isAuth:true},
-                    props($route){
-                        return {
-                            bid:$route.query.bid,
-                        }
-                    },
                     children:[
                         {
+                            name:'approved',
                             path:'approved',
                             component:Approved,
                             meta:{isAuth:true}
                         },
                         {
+                            name:'notApproved',
                             path:'notApproved',
                             component:NotApproved,
-                            meta:{isAuth:true}
+                            meta:{isAuth:true},
+                            props($route){
+                            return {
+                                bid:$route.params.bid,
+                            }
+                    },
                         }
                     ]
                 },
@@ -162,12 +175,23 @@ router.beforeEach((to, from, next) => {
         if(localStorage.getItem('username')!=''&&
         localStorage.getItem('username')!=null&&
         localStorage.getItem('isLoginOut')!='false'){
-            next()
+            if(to.fullPath=='/personalcenter'){
+                next('/personalcenter/pushblog')
+            }else{
+                next()
+            }
         }else{
             alert('权限不足')
         }
     }else{
-       next() 
+        // if(to.fullPath=='/blog' && from.fullPath!='/frontPage'){
+        //     next('/frontPage')
+        // }
+        if(to.fullPath=='/showUsr'&&from.fullPath=='/frontPage'){
+            next('/frontPage')
+        }else{
+            next() 
+        }
     }
     
 })
@@ -177,11 +201,23 @@ router.afterEach((to, from) => {
     if(from.fullPath=='/editing'){
         sessionStorage.setItem('editing','')
     }
+    if(from.fullPath=='/blog'){
+        sessionStorage.setItem("getbid",'')
+    }
+    if(from.fullPath=='/showUsr'){
+        sessionStorage.setItem('uid','')
+    }
     if(to.fullPath=='/setting/accountSetting'&&from.fullPath=='/setting/accountSetting/settingPassWord'){
     }else if(to.fullPath=='/setting/accountSetting/settingPassWord'&&from.fullPath=='/setting/accountSetting'){    
     }
     else{
         window.scrollTo(0,0)
     }
+    if(to.fullPath!='/personalcenter/audit/notApproved'
+        && to.fullPath!='/personalcenter/audit/Approved' 
+        && to.fullPath!='/personalcenter/audit' && to.fullPath!='/editing' 
+        && to.fullPath!='/personalcenter/history'){
+            sessionStorage.setItem('abid','')
+        }
 })
 export default router
