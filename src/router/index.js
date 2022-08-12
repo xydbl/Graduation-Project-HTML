@@ -18,6 +18,8 @@ import NotApproved from '../components/NotApproved.vue'
 import Blog from '../page/Blog.vue'
 import UploadImage from '../components/UploadImage.vue'
 import ShowUsrInfo from '../page/ShowUsrInfo.vue'
+import Collect from '../page/Collect.vue'
+
 
 const router= new VueRouter({
     routes:[
@@ -159,12 +161,19 @@ const router= new VueRouter({
                         }
                     ]
                 },
-                // 历史记录
+                // 
                 {
-                    path:'history',
-                    component:HistoryRecord,
+                    path:'collect',
+                    name:'collect',
+                    component:Collect,
                     meta:{isAuth:true}
-                }
+                },
+                // // 历史记录
+                // {
+                //     path:'history',
+                //     component:HistoryRecord,
+                //     meta:{isAuth:true}
+                // }
             ]
         }
     ]
@@ -207,6 +216,10 @@ router.afterEach((to, from) => {
     if(from.fullPath=='/showUsr'){
         sessionStorage.setItem('uid','')
     }
+    if (from.fullPath=='/personalcenter/editblog') {
+        sessionStorage.setItem('editBlog','')
+        sessionStorage.setItem('isEdit','')
+    }
     if(to.fullPath=='/setting/accountSetting'&&from.fullPath=='/setting/accountSetting/settingPassWord'){
     }else if(to.fullPath=='/setting/accountSetting/settingPassWord'&&from.fullPath=='/setting/accountSetting'){    
     }
@@ -218,6 +231,6 @@ router.afterEach((to, from) => {
         && to.fullPath!='/personalcenter/audit' && to.fullPath!='/editing' 
         && to.fullPath!='/personalcenter/history'){
             sessionStorage.setItem('abid','')
-        }
+    }
 })
 export default router

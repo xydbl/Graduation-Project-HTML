@@ -87,20 +87,28 @@ export default {
             this.$axios.get("http://localhost:8081/api/blog/findAll")
             .then(res=>{
                 this.blogList= res.data
+                // this.blogList= this.blogList.filter((li)=>{
+                //     return li.bstate==1
+                // })
             },error=>{
                 console.log(error.message);
             })
         },
-        listManage(){
-            this.blogList.forEach(li=>{
-                li.btime=new Date(li.btime).getFullYear()
-            })
-        },
+        
+        // 数据处理
+        // listManage(){
+        //     this.blogList.forEach(li=>{
+        //         li.btime=new Date(li.btime).getFullYear()
+        //     })
+        // },
         // 搜索
         SearchBlog(){
             this.$axios.get(`http://localhost:8081/api/blog/findLike/${this.search}`)
             .then(res=>{
                 this.blogList=res.data
+                // this.blogList= this.blogList.filter((li)=>{
+                //     return li.bstate==1
+                // })
             },
             error=>{
                 console.log(error.message);
@@ -110,14 +118,15 @@ export default {
             if(this.search==''){
                 this.getBlogList()
             }
-        }
+        },
         // 按类型搜索
+        // 试验
     },
     mounted(){
         this.getBlogList()
-        setInterval(() => {
-            this.listManage()
-        }, 1000);
+        // setInterval(() => {
+        //     this.listManage()
+        // }, 1000);
         // this.$axios.get('http://localhost:8081/api/blog/')
         // .then(res=>{
         //     this.blog=res.data
@@ -127,7 +136,11 @@ export default {
         // })
     },
     computed:{
-        ...mapState('blogOptions',{myBlogList:'myBlogList'})
+        ...mapState('blogOptions',{myBlogList:'myBlogList'}),
+        // 图片加载
+        // getImgUrl(url){
+        //     return require("@/assets/blogimage/"+url)
+        // }
     }
 }
 </script>

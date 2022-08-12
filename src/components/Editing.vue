@@ -51,7 +51,7 @@ export default {
 			title:'',
 			type:'',
 			content:'',
-			newTime:new Date(),
+			newTime:+new Date(),
 			fromData:{},
 			img:''
 		}
@@ -78,7 +78,7 @@ export default {
 				btitle:this.title,
 				btype:this.type,
 				bcontent:this.content,
-				btime:new Date(),
+				btime:+new Date(),
 				bstate:0
 			}).then(res=>{
 				if(res.data){
@@ -158,7 +158,7 @@ export default {
 				obj.append("buid",this.user.uid)
 				obj.append("btype",this.type)
 				obj.append("bcontent",this.content)
-				obj.append("btime",new Date())
+				obj.append("btime",+new Date())
 				obj.append("bstate",0)
 				this.$nextTick(function(){
 					this.$axios({

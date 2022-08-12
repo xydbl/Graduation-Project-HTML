@@ -99,7 +99,7 @@ export default {
         // 修改完成
 		editFinish(){
 			this.$axios.post('http://localhost:8081/api/blog/save',{
-				bid:this.bid,
+				bid:this.bid||this.blog.bid,
 				btitle:this.title,
 				btype:this.type,
 				bcontent:this.content
@@ -124,7 +124,19 @@ export default {
 		}else{
 			this.currentBlog(isEdit)
 		}
-		
+		setTimeout(() => {
+			sessionStorage.setItem('editBlog',JSON.stringify(this.blog))
+		}, 300);
+		setTimeout(() => {
+			let editBlog=sessionStorage.getItem('editBlog')
+			if(editBlog!=''&&editBlog!=null){
+				editBlog=JSON.parse(editBlog)
+				this.title=editBlog.btitle
+				this.type=editBlog.btype
+				this.content=editBlog.bcontent
+				this.img=editBlog.bimage
+			}
+		}, 400);
 	}
 }
 </script>

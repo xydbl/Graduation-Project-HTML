@@ -55,7 +55,7 @@ export default {
         }
     },
     methods: {
-        ...mapMutations('blogOptions',{getMyBlogList:'GETMYBLOGLIST',setMyBlogListTime:'SETMYBLOGLISTTIME'}),
+        ...mapMutations('blogOptions',{getMyBlogList:'GETMYBLOGLIST'}),
         // 查询  在vuex 中进行
         // findBlog(){
         //     this.$axios.get(`http://localhost:8081/api/blog/findByUid/${this.user.uid}`)
@@ -93,9 +93,6 @@ export default {
             // this.findBlog()
             this.getMyBlogList(this.user.uid)
         }, 500);
-        setTimeout(() => {
-            this.setMyBlogListTime()
-        }, 1000);
     }
 }
 </script>
