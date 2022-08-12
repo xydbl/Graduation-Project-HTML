@@ -34,7 +34,7 @@
 				</el-upload>
 			</div>
 			<div class="mavonEditor">
-				<mavon-editor v-model="content" />
+				<mavon-editor v-model="content" @imgAdd="imgAdd1" ref="edingMd" />
 			</div>
 		</div>
 	</div>
@@ -181,8 +181,21 @@ export default {
 					})
 				})
 			}
-			
 		},
+		// mavon-editor 图片上传
+		imgAdd1(pos,file){
+			let formData=new FormData()
+			formData.append('file',file)
+			this.$axios({
+				method:'post',
+				url:'http:/localhost:8081/api/mavon/imgAdd',
+				data:formData
+			})
+			.then(res=>{
+				let url='/MavonImg/'+res.data
+				this.$refs.edingMd.$img2Url(pos,url)
+			})
+		}
 	},
 	computed:{
 		...mapState('userOptions',{user:'user'}),

@@ -33,7 +33,7 @@
 				</el-upload>
 			</div>
 			<div class="mavonEditor">
-				<mavon-editor v-model="content" @imdAdd="$imgAdd" ref="md" />
+				<mavon-editor v-model="content" @imgAdd="imgAdd" ref="md" />
 			</div>
 		</div>
 	</div>
@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 export default {
     name:'EditBlog',
     data() {
@@ -56,6 +56,7 @@ export default {
 	},
 	props:['bid','btitle','btype','bimg','bcontent'],
 	methods: {
+		...mapMutations('blogOptions',{currentBlog:'CURRENTBLOG'}),
 		updateBlogImg(params){
 			let file=params.file
 			let index=file.name.lastIndexOf(".")
@@ -72,7 +73,7 @@ export default {
 				obj.append('bid',this.bid)
 				this.$axios({
 					method:'post',
-					url:'http://localhost:80881/api/blog/uploadInEdit',
+					url:'http://localhost:8081/api/blog/uploadInEdit',
 					data:obj
 				}).then(res=>{
 					this.img=res.data.bimage
@@ -82,16 +83,16 @@ export default {
 				})
 			}
 		},
-        // 图片上传
-        $imgAdd(pos, $file){
-            let fileData=new FileData()
-            fileData.append('file',$file)
+        // 图片上传 Mavob-Editor
+        imgAdd(pos, file){
+            let formData=new FormData()
+            formData.append('file',file)
             this.$axios({
                 method:'post',
-                url:'http://localhost:8081/api/mavon/AddImg',
-                data:fileData
+                url:'http://localhost:8081/api/mavon/addImg',
+                data:formData
             }).then(res=>{
-                let url='../../public/MavonImg'+res.data
+                let url='/MavonImg/'+res.data
                 this.$refs.md.$img2Url(pos,url)
             })
         },
@@ -111,11 +112,19 @@ export default {
 		}
 	},
 	computed:{
-		...mapState('userOptions',{user:'user'})
+		...mapState('userOptions',{user:'user'}),
+		...mapState('blogOptions',{blog:'blog'})
 	},
 	mounted(){
-		// let isEdit=sessionStorage.getItem('isEdit')
-		// if(isEdit!='')
+		let isEdit=sessionStorage.getItem('isEdit')
+		if(isEdit==''||isEdit==undefined||isEdit==null){
+			sessionStorage.setItem('isEdit',this.bid)
+			// this.updateBid(this.bid)
+			this.currentBlog(this.bid)
+		}else{
+			this.currentBlog(isEdit)
+		}
+		
 	}
 }
 </script>

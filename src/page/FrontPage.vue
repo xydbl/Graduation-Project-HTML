@@ -4,7 +4,7 @@
     
     <!-- 搜索 -->
     <div class="searchBar">
-        <input type="text" style="height:36px;width:360px;" placeholder="请输入要搜索的内容" v-model="search" @keyup.enter="SearchBlog">
+        <input type="text" style="height:36px;width:360px;" placeholder="请输入要搜索的内容" @input="searchEnd" v-model="search" @keyup.enter="SearchBlog">
         <el-button type="primary" icon="el-icon-search" @click="SearchBlog">搜索</el-button>
         <!-- <el-button icon="el-icon-search" circle></el-button> -->
     </div>
@@ -100,11 +100,16 @@ export default {
         SearchBlog(){
             this.$axios.get(`http://localhost:8081/api/blog/findLike/${this.search}`)
             .then(res=>{
-                console.log(res.data);
+                this.blogList=res.data
             },
             error=>{
                 console.log(error.message);
             })
+        },
+        searchEnd(){
+            if(this.search==''){
+                this.getBlogList()
+            }
         }
         // 按类型搜索
     },
