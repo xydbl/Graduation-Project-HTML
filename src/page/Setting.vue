@@ -11,15 +11,16 @@
         <!-- 头像 -->
         <div class="avatar">
           <router-link to="/setting/uploadimage">
-            <el-avatar src="../assets/logo.png" style="width:70px;height:70px; position:relative;top:-50px;left:10px; float:left;">
-            </el-avatar>
+            <!-- <el-avatar src="../assets/logo.png" style="width:70px;height:70px; position:relative;top:-50px;left:10px; float:left;">
+            </el-avatar> -->
+            <img :src="require('../assets/userimage/'+user.image)" alt=""  class="aimage">
           </router-link>
           
-          <span style="position: relative; top:-40px; left:80px">{{usMsg.nickname}}</span>
+          <span style="position: relative; top:-40px; left:80px">{{user.nickname}}</span>
           <!-- <div>
             <input type="text">
           </div> -->
-          <span v-if="!isSig">{{usMsg.signature}}</span>
+          <span v-if="!isSig">{{user.signature}}</span>
           <input type="text" v-if="isSig" v-model="signature" style="width:150px" @keyup.enter="finishSig" @blur="giveSet" ref="getFocus">
           <el-button @click="setSig" v-if="!isSig" type="primary" icon="el-icon-edit" style="border:0; color:black;background-color: #fff; height:20px"></el-button>
         </div>
@@ -40,6 +41,7 @@
 
 <script>
 import axios from 'axios'
+import { mapState } from 'vuex'
 export default {
     name:'Setting',
     data() {
@@ -82,9 +84,10 @@ export default {
       }
     },
     computed:{
-      usMsg(){
-        return this.$store.state.userOptions.user
-      }
+      ...mapState('userOptions',{user:'user'}),
+      // usMsg(){
+      //   return this.$store.state.userOptions.user
+      // }
     }
 }
 </script>
@@ -136,5 +139,15 @@ hr{
   /* border: 1px solid black; */
   top: -190px;
   left: 380px;
+}
+.aimage{
+  width: 70px;
+  height: 70px;
+  position:relative;
+  top:-50px;
+  left:10px;
+  float:left;
+  border-radius: 50%;
+  border: 1px solid #ffffff;
 }
 </style>

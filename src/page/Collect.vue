@@ -16,7 +16,7 @@
         prop="bimage"
         label="封面"
         width="320" align="center" height="90px">
-            <template slot-scope="scope"><img :src="require('../assets/blogimage/'+scope.raw.bimage)" alt=""></template>
+            <template slot-scope="scope"><img src="" alt=""></template>
         </el-table-column>
         <el-table-column
         prop="btitle"
@@ -33,14 +33,13 @@
         </el-table-column>
         <el-table-column label="操作">
             <template slot-scope="scope">
-                <el-button size="mini">删除</el-button>
+                <el-button size="mini" @click="delCollect(scope.row.bid)">删除</el-button>
             </template>
         </el-table-column>
     </el-table>
     <div style="margin-top: 20px">
         <el-button @click="toggleSelection()">取消选择</el-button>
-        <el-button>删除选中</el-button>
-
+        <el-button @click="delAll">删除选中</el-button>
     </div>
   </div>
 </template>
@@ -57,7 +56,7 @@ export default {
         }
     },
     methods: {
-        // 
+        
         toggleSelection(rows) {
             if (rows) {
             rows.forEach(row => {
@@ -70,20 +69,23 @@ export default {
         // 
         handleSelectionChange(val) {
             this.multipleSelection = val;
+            // console.log(this.multipleSelection);
         },
         // 获取
         getMyCollect(){
             this.$axios.get(`http://localhost:8081/api/collect/findByUid/${this.user.uid}`)
             .then(res=>{
                 this.collectList=res.data
+                this.tableData=res.data
             },
             error=>{
                 console.log(error.message);
             })
         },
         // 删除
-        delCollect(){
-            this.$axios.get(`http://localhost:8081/api/collect/delById/${xx}`)
+        delCollect(bid){
+            // console.log(bid);
+            this.$axios.get(`http://localhost:8081/api/collect/delById/${bid}`)
             .then(res=>{
                 if (res.data) {
                     alert('成功')
@@ -95,10 +97,18 @@ export default {
         },
         // 批量删除
         delAll(){
+            let delList=[]
+            this.multipleSelection.forEach(li=>{
+                delList.push(li.bid)
+            })
+            if(delList==''){
+                alert("选中为空")
+                return false
+            }
             this.$axios({
                 method:'post',
                 url:'http://localhost:8081/api/collect/delAll',
-                data:x
+                data:delList
             }).then(res=>{
                 res.data
             },

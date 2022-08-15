@@ -44,7 +44,7 @@ export default {
     },
     methods: {
         ...mapMutations('userOptions',{getBlogUserMessage:'GETBLOGUSERMESSAGE'}),
-        ...mapMutations('blogOptions',{getMyBlogList:'GETMYBLOGLIST',setMyBlogListTime:'SETMYBLOGLISTTIME'})
+        ...mapMutations('blogOptions',{getMyBlogList:'GETMYBLOGLIST'})
     },
     computed:{
         ...mapState('userOptions',{blogUser:'blogUser'}),
@@ -60,9 +60,9 @@ export default {
             this.getBlogUserMessage(uid)
             this.getMyBlogList(uid)
         }
-        setTimeout(() => {
-            this.setMyBlogListTime()
-        }, 200);
+        // setTimeout(() => {
+        //     this.setMyBlogListTime()
+        // }, 200);
     }
 }
 </script>

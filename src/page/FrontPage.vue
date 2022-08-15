@@ -37,7 +37,7 @@
             <h2 style="position:relative;left:20px">news</h2>
         </div>
         <div class="blogExhibit">
-            <div v-for="list in blogList" :key="list.bid">
+            <div v-for="list in pageList.records" :key="list.bid">
                 <router-link :to="{
                     name:'blog',
                     params:{
@@ -62,9 +62,11 @@
     <!-- 分页 -->
     <div class="pagination">
         <el-pagination
-        :page-size="8"
+        :page-size="6"
+        :current-page="pageIndex"
+        @current-change="handelCurrentChange"
         layout="prev, pager, next, jumper"
-        :total="1000">
+        :total="pageList.total">
         </el-pagination>
     </div>
   </div>
@@ -78,10 +80,31 @@ export default {
         return {
             blogList:[],
             titleBlog:'',
-            search:''
+            search:'',
+            pageList:[],
+            pageIndex:1
         }
     },
     methods: {
+        // 
+        handelCurrentChange(val){
+            this.pageIndex=val
+            this.getPage()
+        },
+        // 分页查询
+        getPage(){
+            // console.log('111');
+            // console.log(this.pageIndex);
+            this.$axios.post("http://localhost:8081/api/blog/page",{
+                pageIndex:this.pageIndex,
+                pageSize:6
+            }).then(res=>{
+                this.pageList=res.data
+                console.log(res.data);
+            },error=>{
+                console.log(error.message);
+            })
+        },
         // 加载
         getBlogList(){
             this.$axios.get("http://localhost:8081/api/blog/findAll")
@@ -120,10 +143,19 @@ export default {
             }
         },
         // 按类型搜索
+        searchType(){
+            this.$axios.get(`http://localhost:8081/api/blog/findByType/${x}`)
+            .then(res=>{
+                this.blogList=res.data
+            },error=>{
+                console.log(error.message);
+            })
+        }
         // 试验
     },
     mounted(){
         this.getBlogList()
+        this.getPage()
         // setInterval(() => {
         //     this.listManage()
         // }, 1000);

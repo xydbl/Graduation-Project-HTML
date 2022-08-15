@@ -149,6 +149,7 @@ const commentaryOptions={
             state.cbid=value
         },
         // 查看当前博客的所有评论
+        //  仅仅在审核评论时使用
         CURRENTCOMMENTARY(state,value){
             axios.get(`http://localhost:8081/api/commentary/findById/${value}`)
             .then(res=>{
@@ -157,6 +158,10 @@ const commentaryOptions={
                 console.log(error.message);
             })
         },
+        // 展示博客时调用
+        COMMENTARYBLOG(state,value){
+            state.commentaryList=value
+        }
     },
     state:{
         // 审核评论所属的博客

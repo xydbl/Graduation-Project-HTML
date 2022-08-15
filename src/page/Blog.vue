@@ -23,14 +23,14 @@
 	    </div>
       <!-- 评论 -->
       <div style="position: relative;border-bottom: 1px solid #7E8388;top:20px">
-        <el-badge :value="200" :max="99" class="item" style="font-size: 20px;">
+        <el-badge :value="list.length" :max="99" class="item" style="font-size: 20px;">
           评论
         </el-badge>
       </div>
       <div class="botm">
         <div>
-			  <input type="text" placeholder="进行评论" v-model="commentary"><button @click="sendComm">发表评论</button>
-		  </div>
+			    <input type="text" placeholder="进行评论" v-model="commentary"><button @click="sendComm">发表评论</button>
+		    </div>
         <div style="margin-left:20px;margin-top:10px;border-bottom:1px solid black" v-for=" comm in list" :key="comm.cid">
           <div>
             <h2>{{comm.messageId}}</h2>
@@ -38,17 +38,21 @@
             <div style="text-align:left;">
               <span style="margin-bottom:10px;">{{comm.ctime}}</span>
               <span >
-                <img v-if="false" src="../assets/Active.png" alt="" style="width:20px;height:20px;margin-left:10px;cursor: pointer;">
-                <img v-if="true" src="../assets/White.png" alt="" style="width:20px;height:20px;margin-left:10px;cursor: pointer;">
+                <img v-if="comm.isD" src="../assets/Active.png" alt="" @click="delD(comm.did)" style="width:20px;height:20px;margin-left:10px;cursor: pointer;">
+                <img v-if="!comm.isD" src="../assets/White.png" alt="" @click="addD(comm.cid)" style="width:20px;height:20px;margin-left:10px;cursor: pointer;">
               </span>
-              <span style="margin-left:6px">1</span>
-              <span class="reply">回复</span>
+              <span style="margin-left:6px">{{comm.list.length}}</span>
+              <span class="reply" @click="startReply(comm.cid)">回复</span>
             </div>
             <div></div>
           </div>
           <!-- <ul>
             <li v-for=" comm in list" :key="comm.cid"><span>{{comm.messageId}}</span><br><br>{{comm.message}}<br><span style="font-size:10px">评论时间:{{comm.ctime}}</span></li>
           </ul> -->
+        </div>
+        <div class="reply1" v-if="isReply">
+          <input type="text" placeholder="请输入要回复的内容" v-model="hMessage" ref="reply"><button @click="endReply">取消</button>
+          <button @click="replyMsg">回复</button>
         </div>
 		  
       </div>
@@ -64,8 +68,16 @@ export default {
     name:'Blog',
     data() {
       return {
+        // 发表评论
         commentary:'',
         username:'',
+        // repMsg:'',
+        isReply:false,
+        // 回复信息
+        hMessage:'',
+        // 回复的评论id cid
+        cid:'',
+        // 评论列表
         list:[]
       }
     },
@@ -75,7 +87,22 @@ export default {
       ...mapMutations("userOptions",{getBlogUserMessage:'GETBLOGUSERMESSAGE'}),
       ...mapMutations("blogOptions",{currentBlog:'CURRENTBLOG'}),
       // 获取评论
-      ...mapMutations('commentaryOptions',{currentCommentary:'CURRENTCOMMENTARY'}),
+      // ...mapMutations('commentaryOptions',{currentCommentary:'CURRENTCOMMENTARY',commentaryBlog:'COMMENTARYBLOG'}),
+
+      // 获取评论 包含点赞等信息
+      getComm(){
+        let username=localStorage.getItem("username")
+        this.$axios.post('http://localhost:8081/api/commentary/findByBid',{
+          bid:this.bid||this.blog.bid,
+          s:this.user.userName||username
+        }).then(res=>{
+          // console.log(res.data);
+          this.list=res.data
+        },
+        error=>{
+          console.log(error.message);
+        })
+      },
       // 发送评论
       sendComm(){
         if(this.commentary!=''){
@@ -94,20 +121,68 @@ export default {
         }else{
           alert('不能为空')
         }
-        
       },
-      // 过滤评论
-      approvedComment(){
-        this.list=this.commentaryList
-        this.list=this.list.filter((li)=>{
-          return li.ctype==1
+      // // 过滤评论
+      // approvedComment(){
+      //   this.list=this.commentaryList
+      //   this.list=this.list.filter((li)=>{
+      //     return li.ctype==1
+      //   })
+      // }
+
+      // 点赞功能
+      addD(cid){
+        this.$axios.post('http://localhost:8081/api/dTable/add',{
+          dcid:cid,
+          duser:this.user.userName
+        }).then(res=>{
+          this.getComm()
+        },error=>{
+          console.log(error.message);
+        })
+      },
+      // 过滤点赞信息
+      //  取消点赞
+      delD(did){
+        this.$axios.get(`http://localhost:8081/api/dTable/del/${did}`)
+        .then(res=>{
+          this.getComm()
+        },
+        error=>{
+          console.log(error.message);
+        })
+      },
+      // 回复
+      startReply(cid){
+        this.isReply=true
+        this.cid=cid
+        this.$nextTick(function(){
+          this.$refs.reply.focus()
+        })
+      },
+      // 取消回复
+      endReply(){
+        this.hMessage=''
+        this.isReply=false
+      },
+      // 回复
+      replyMsg(){
+        this.$axios.post('http://localhost:8081/api/reply/add',{
+          hcid:this.cid,
+          hmessage:this.hMessage,
+          htime:new Date(),
+          state:0
+        }).then(res=>{
+        },
+        error=>{
+          console.log(error.message);
         })
       }
     },
     computed:{
       ...mapState('userOptions',{user:'user',blogUser:'blogUser'}),
       ...mapState('blogOptions',{blog:'blog'}),
-      ...mapState('commentaryOptions',{commentaryList:'commentaryList'}),
+      // ...mapState('commentaryOptions',{commentaryList:'commentaryList'}),
       compiledMarkdown(){
         return marked.parse(this.bcontent||this.blog.bcontent||'',{sanitize:true})
       }
@@ -118,18 +193,22 @@ export default {
           // console.log(this.bid);
           this.getBlogUserMessage(this.bid)
           sessionStorage.setItem("getbid",this.bid)
-          this.currentCommentary(this.bid)
+          // this.currentCommentary(this.bid)
+          this.getComm()
         }else{
           let bid=sessionStorage.getItem("getbid")
           this.getBlogUserMessage(bid)
           this.currentBlog(bid)
-          this.currentCommentary(bid)
+          // this.currentCommentary(bid)
+          this.getComm()
         }
         setTimeout(() => {
           this.username=this.blogUser.username 
+          // this.commentaryBlog()
+          this.getComm()
         }, 200);
         setInterval(() => {
-          this.approvedComment()
+          // this.approvedComment()
         }, 500);
        
     }
@@ -175,5 +254,18 @@ export default {
 }
 .reply:hover{
   color: skyblue;
+}
+.reply1{
+  position: fixed;
+  top: 500px;
+  left: 500px;
+  opacity: 0.9;
+}
+.reply1 button{
+  width: 60px;
+  border: 0;
+  opacity: 0.7;
+  cursor: pointer;
+  margin-left: 10px;
 }
 </style>
