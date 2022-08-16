@@ -41,6 +41,7 @@
         <el-button @click="toggleSelection()">取消选择</el-button>
         <el-button @click="delAll">删除选中</el-button>
     </div>
+    
   </div>
 </template>
 
@@ -56,7 +57,6 @@ export default {
         }
     },
     methods: {
-        
         toggleSelection(rows) {
             if (rows) {
             rows.forEach(row => {
@@ -71,6 +71,7 @@ export default {
             this.multipleSelection = val;
             // console.log(this.multipleSelection);
         },
+       
         // 获取
         getMyCollect(){
             this.$axios.get(`http://localhost:8081/api/collect/findByUid/${this.user.uid}`)
@@ -88,11 +89,16 @@ export default {
             this.$axios.get(`http://localhost:8081/api/collect/delById/${bid}`)
             .then(res=>{
                 if (res.data) {
-                    alert('成功')
+                    // alert('成功')
+                    this.$message({
+                        message:'成功删除',
+                        type:'success'
+                    })
                 }
             },
             error=>{
                 console.log(error.message)
+                this.$message.warning('删除失败')
             })
         },
         // 批量删除
@@ -102,7 +108,8 @@ export default {
                 delList.push(li.bid)
             })
             if(delList==''){
-                alert("选中为空")
+                // alert("选中为空")
+                this.$message.warning('选中为空')
                 return false
             }
             this.$axios({

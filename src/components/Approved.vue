@@ -20,6 +20,7 @@
             </tr>
         </tbody>
     </table>
+    
   </div>
 </template>
 
@@ -99,13 +100,24 @@ export default {
             console.log(error.message);
           })
         }
-        
+      },
+      test1(){
+        this.$axios.post('http://localhost:8081/api/commentary/findByIdPage',{
+          bid:1,
+          pageIndex:1,
+          pageSize:6
+        }).then(res=>{
+          console.log(res.data);
+        },error=>{
+          console.log(error.message);
+        })
       }
     },
     computed:{
       ...mapState('commentaryOptions',{commentaryList:'commentaryList'})
     },
     mounted() {
+      // this.test1()
       let abid=sessionStorage.getItem('abid')
       this.currentCommentary(abid)
       // setInterval(() => {

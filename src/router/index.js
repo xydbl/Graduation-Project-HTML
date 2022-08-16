@@ -19,7 +19,7 @@ import Blog from '../page/Blog.vue'
 import UploadImage from '../components/UploadImage.vue'
 import ShowUsrInfo from '../page/ShowUsrInfo.vue'
 import Collect from '../page/Collect.vue'
-
+import ReplyApp from '../components/ReplyApp.vue'
 
 const router= new VueRouter({
     routes:[
@@ -154,10 +154,16 @@ const router= new VueRouter({
                             component:NotApproved,
                             meta:{isAuth:true},
                             props($route){
-                            return {
-                                bid:$route.params.bid,
-                            }
-                    },
+                                return {
+                                    bid:$route.params.bid,
+                                }
+                            },
+                        },
+                        {
+                            name:'reply',
+                            path:'reply',
+                            component:ReplyApp,
+                            meta:{isAuth:true}
                         }
                     ]
                 },
@@ -229,7 +235,7 @@ router.afterEach((to, from) => {
     if(to.fullPath!='/personalcenter/audit/notApproved'
         && to.fullPath!='/personalcenter/audit/Approved' 
         && to.fullPath!='/personalcenter/audit' && to.fullPath!='/editing' 
-        && to.fullPath!='/personalcenter/history'){
+        && to.fullPath!='/personalcenter/history' && to.fullPath!='/personalcenter/audit/reply'){
             sessionStorage.setItem('abid','')
     }
 })

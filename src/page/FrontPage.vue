@@ -78,10 +78,14 @@ export default {
     name:'FrontPage',
     data() {
         return {
+            // 博客列表
             blogList:[],
             titleBlog:'',
+            // 搜索
             search:'',
+            // 分页查询的结果
             pageList:[],
+            // 页数
             pageIndex:1
         }
     },
@@ -100,7 +104,7 @@ export default {
                 pageSize:6
             }).then(res=>{
                 this.pageList=res.data
-                console.log(res.data);
+                // console.log(res.data);
             },error=>{
                 console.log(error.message);
             })

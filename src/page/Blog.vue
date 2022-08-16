@@ -15,7 +15,8 @@
             }
             }">{{username}}</router-link>
         </span>
-        <span style="position: relative; left: 270px;bottom: 5px;">发布时间：2020-08-09 07:25:33</span>
+        <el-button type="warning" icon="el-icon-star-off" circle style="position:relative;left:450px;top:-40px" @click="collectBlog" size="mini"></el-button>
+        <span style="position: relative; left: 230px;bottom: 5px;">发布时间：2020-08-09 07:25:33</span>
       </div>
 	    <!-- 正文 -->
       <div>
@@ -23,7 +24,7 @@
 	    </div>
       <!-- 评论 -->
       <div style="position: relative;border-bottom: 1px solid #7E8388;top:20px">
-        <el-badge :value="list.length" :max="99" class="item" style="font-size: 20px;">
+        <el-badge :value="commNum" :max="99" class="item" style="font-size: 20px;">
           评论
         </el-badge>
       </div>
@@ -43,6 +44,11 @@
               </span>
               <span style="margin-left:6px">{{comm.list.length}}</span>
               <span class="reply" @click="startReply(comm.cid)">回复</span>
+              <span class="lookcomm" v-if="comm.replyList.length!=0" @click="lookReply(comm)">查看/收起</span>
+              <div class="replybox1" v-if="comm.isLook" v-for="li in comm.replyList">
+                <span style="font-size:18px;">&nbsp&nbsp{{li.husr||'游客'}}</span><br>
+                <span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{li.hmessage}}</span>
+              </div>
             </div>
             <div></div>
           </div>
@@ -54,7 +60,9 @@
           <input type="text" placeholder="请输入要回复的内容" v-model="hMessage" ref="reply"><button @click="endReply">取消</button>
           <button @click="replyMsg">回复</button>
         </div>
-		  
+        <!-- <div> -->
+          <!-- <el-button :plain="true" @click="msg1">xxxxx</el-button> -->
+        <!-- </div> -->
       </div>
       
     </div>
@@ -78,7 +86,9 @@ export default {
         // 回复的评论id cid
         cid:'',
         // 评论列表
-        list:[]
+        list:[],
+        // 评论数
+        commNum:''
       }
     },
     props:["bid","btype",'btitle','bcontent','btime'],
@@ -114,7 +124,8 @@ export default {
             clogId:this.blog.bid||this.bid
           }).then(res=>{
             this.commentary=''
-            this.currentCommentary(this.blog.bid ||this.bid)
+            this.getComm()
+            // this.currentCommentary(this.blog.bid ||this.bid)
           },error=>{
             console.log(error.message);
           })
@@ -171,13 +182,94 @@ export default {
           hcid:this.cid,
           hmessage:this.hMessage,
           htime:new Date(),
-          state:0
+          state:0,
+          husr:this.user.userName||'游客',
+          hbid:this.blog.bid||this.bid
         }).then(res=>{
+          this.isReply=false
+          this.hMessage=''
+          this.getComm()
+          this.msg1()
         },
         error=>{
           console.log(error.message);
         })
-      }
+      },
+      // 提示信息
+      msg1(){
+        this.$message({
+          message:'成功',
+          type:'success'
+        })
+      },
+      msg2(){
+        this.$message.error("失败")
+      },
+      // 测试
+      test2(){
+        let username=localStorage.getItem("username")
+        this.$axios.post('http://localhost:8081/api/commentary/commPage',{
+          bid:this.blog.bid||this.bid,
+          pageIndex:1,
+          pageSize:6,
+          s:username||this.user.userName
+        }).then(res=>{
+          console.log(res.data);
+        },error=>{
+          console.log(error.message);
+        })
+      },
+      // 隐藏 显示
+      lookReply(comm){
+        if(!comm.isLook){
+          if(comm.isLook==null||comm.isLook==undefined){
+            this.$set(comm,'isLook',true)
+          }else{
+            comm.isLook=true
+          }
+        }else{
+          comm.isLook=false
+        }
+        
+      },
+      // 评论数量 评论+回复
+      getCommNum(){
+        let num=0
+        this.list.forEach(li => {
+          num++
+          if (li.replyList.length!=0) {
+            let x=li.replyList
+            x.forEach(x=>{
+              num++
+            })
+          }
+        });
+        this.$nextTick(function(){
+          this.commNum=num
+        })
+      },
+      // 收藏博客
+      collectBlog(){
+        this.$axios.post('http://localhost:8081/api/collect/add',{
+          uid:this.user.uid,
+          bid:this.blog.bid||this.bid,
+          time:new Date()
+        }).then(res=>{
+          if (res.data) {
+            this.$message({
+              message:'收藏成功',
+              type:'success'
+            })
+          }else{
+            this.$message({
+              message:'您已收藏本博客，请勿重复收藏',
+              type:'warning'
+            })
+          }
+        },error=>{
+          console.log(error.message);
+        })
+      },
     },
     computed:{
       ...mapState('userOptions',{user:'user',blogUser:'blogUser'}),
@@ -185,7 +277,21 @@ export default {
       // ...mapState('commentaryOptions',{commentaryList:'commentaryList'}),
       compiledMarkdown(){
         return marked.parse(this.bcontent||this.blog.bcontent||'',{sanitize:true})
-      }
+      },
+      // 评论数量
+      // getCommNum(){
+      //   let num=0
+      //   this.list.forEach(li => {
+      //     num++
+      //     if (li.replyList.length!=0) {
+      //       let x=li.replyList
+      //       x.forEach(x=>{
+      //         num++
+      //       })
+      //     }
+      //   });
+      //   return num
+      // }
     },
     mounted(){
         let bid=sessionStorage.getItem("getbid")
@@ -206,10 +312,15 @@ export default {
           this.username=this.blogUser.username 
           // this.commentaryBlog()
           this.getComm()
+          // this.test2()
+          
         }, 200);
-        setInterval(() => {
-          // this.approvedComment()
+        setTimeout(() => {
+          this.getCommNum()
         }, 500);
+        // setInterval(() => {
+        //   // this.approvedComment()
+        // }, 500);
        
     }
 }
@@ -267,5 +378,17 @@ export default {
   opacity: 0.7;
   cursor: pointer;
   margin-left: 10px;
+}
+.replybox1{
+  border-top: 1px solid burlywood;
+  opacity: 0.6;
+  background-color: antiquewhite;
+}
+.lookcomm{
+  cursor: pointer;
+  margin-left:20px
+}
+.lookcomm:hover{
+  color: skyblue;
 }
 </style>

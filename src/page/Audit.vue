@@ -1,9 +1,11 @@
 <template>
   <div>
     <div style="font-size:18px">
-      <router-link to="/personalcenter/audit/notApproved">未审核的评论</router-link>
+      <router-link to="/personalcenter/audit/notApproved">评论管理</router-link>
+      <!-- <span></span> -->
+      <!-- <router-link to="/personalcenter/audit/Approved">以通过审核的评论</router-link> -->
       <span></span>
-      <router-link to="/personalcenter/audit/Approved">以通过审核的评论</router-link>
+      <router-link to="/personalcenter/audit/reply">回复管理</router-link>
     </div>
    
     <div style="position: relative;top:20px">
