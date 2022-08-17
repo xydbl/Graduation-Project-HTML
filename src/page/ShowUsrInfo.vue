@@ -1,33 +1,60 @@
 <template>
   <div class="uInfo">
     <div class="left">
-        <img :src="require('../assets/userimage/'+blogUser.image)" alt=""><br>
-        <span>昵称:{{blogUser.username}}</span><br><br>
-        <span style="font-size: 14px; opacity: .5;">注册时间:{{blogUser.date1}}</span>
+        <img v-if="user.image!=null" :src="require('../assets/userimage/'+user.image)" alt="">
+        <img v-else src="../assets/White.png" alt=""><br>
+        <span>昵称:{{user.username}}</span><br><br>
+        <span style="font-size: 14px; opacity: .5;">注册时间:{{user.date1}}</span>
     </div>
 	<div class="right">
+        <span>&nbsp</span><br>
 		<h2>他发布的博客</h2>
 		<hr>
-		<div class="btble" v-for="list in myBlogList" :key="list.bid" >
-			<router-link :to="{
-                name:'blog',
-                params:{
-                    bid:list.bid,
-                    btitle:list.btitle,
-                    btype:list.btype,
-                    bcontent:list.bcontent,
-                    btime:list.btime
-                }
-            }">
-                <img src="" style="width:160px;height:90px;">
-                <div style="position: absolute;left: 170px;top: 0;height: 90px;width: 420px;">
-                    <strong style="font-size: 22px;">{{list.btitle}}</strong>
-                </div>
-                <div style="position: absolute;top: 0;left: 600px;height: 90px;width: 150px;text-align: center;line-height: 60px;">
-                    {{list.btime}}
-                </div>
-            </router-link>
-		</div>
+		<div>
+            <el-table
+                :data="tableData"
+                style="width: 100%"
+                row-key="bid"
+                >
+                <el-table-column 
+                prop="bimage"
+                label="封面"
+                width="320" align="center" height="90px">
+                    <template slot-scope="scope">
+                        <img v-if="scope.row.bimage!=null&&scope.row.bimage!=''" :src="require('../assets/blogimage/'+scope.row.bimage)" alt="" style="width:160px;height:90px;">
+                        <img v-else src="../assets/White.png" alt="" style="width:160px;height:90px;">
+                    </template>
+                </el-table-column>
+                <el-table-column
+                prop="btitle"
+                label="标题"
+                width="240">
+                    <template slot-scope="scope">{{scope.row.btitle}}</template>   
+                </el-table-column>
+
+                <el-table-column
+                prop="btime"
+                label="日期"
+                >
+                <template slot-scope="scope">{{ scope.row.btime }}</template>
+                </el-table-column>
+                <el-table-column>
+                    <template slot-scope="scope">
+                        <el-button>点击查看</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <!-- 分页 -->
+            <div class="pagination">
+                <el-pagination
+                :page-size="6"
+                :current-page="pageIndex"
+                @current-change="handelCurrentChange"
+                layout="prev, pager, next, jumper"
+                :total="total">
+                </el-pagination>
+            </div>
+        </div>
 	</div>
   </div>
 </template>
@@ -39,26 +66,56 @@ export default {
     props:['username','uid','image'],
     data() {
         return {
+            tableData:[],
+            total:7,
+            pageIndex:1,
+            user:[]
         }
     },
     methods: {
         ...mapMutations('userOptions',{getBlogUserMessage:'GETBLOGUSERMESSAGE'}),
-        ...mapMutations('blogOptions',{getMyBlogList:'GETMYBLOGLIST'})
+        handelCurrentChange(val){
+            this.pageIndex=val
+            this.getBlogList()
+        },
+        getUserMsg(){
+            let id=sessionStorage.getItem('uid')
+            this.$axios.get(`http://localhost:8081/api/user/findById/${id||this.uid}`)
+            .then(res=>{
+                this.user=res.data
+            },error=>{
+                console.log(error.message);
+            })
+        },
+        getBlogList(){
+            let uid=sessionStorage.getItem("uid")
+            this.$axios.post('http://localhost:8081/api/blog/page/state',{
+                id:this.uid||uid,
+                pageIndex:this.pageIndex,
+                pageSize:8,
+            }).then(res=>{
+                this.tableData=res.data.records
+                this.total=res.data.total
+            },error=>{
+                console.log(error.message);
+            })
+        }
     },
     computed:{
         ...mapState('userOptions',{blogUser:'blogUser'}),
-        ...mapState('blogOptions',{myBlogList:'myBlogList'})
+        // ...mapState('blogOptions',{myBlogList:'myBlogList'})
     },
     mounted(){
         let uid=sessionStorage.getItem("uid")
         if(uid==null||uid==''){
             sessionStorage.setItem('uid',this.uid)
-            this.getBlogUserMessage(this.uid)
-            this.getMyBlogList(this.uid)
+            // console.log(this.uid,uid);
+            // this.getBlogUserMessage(this.uid)
         }else{
-            this.getBlogUserMessage(uid)
-            this.getMyBlogList(uid)
+            // this.getBlogUserMessage(uid)
         }
+        this.getBlogList()
+        this.getUserMsg()
         // setTimeout(() => {
         //     this.setMyBlogListTime()
         // }, 200);
@@ -103,12 +160,8 @@ export default {
 .right hr{
 	border: 2px solid bisque;
 }
-.btble{
-	position: relative;
-	/* left: 20px; */
-	margin: 20px;
-	height: 110px;
-    /* background-color: rgb(24, 76, 207); */
-	border-bottom: 1px solid lightsteelblue;
+.pagination{
+    position: relative;
+    top: 20px;
 }
 </style>

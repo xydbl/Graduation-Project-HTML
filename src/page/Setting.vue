@@ -13,7 +13,8 @@
           <router-link to="/setting/uploadimage">
             <!-- <el-avatar src="../assets/logo.png" style="width:70px;height:70px; position:relative;top:-50px;left:10px; float:left;">
             </el-avatar> -->
-            <img :src="require('../assets/userimage/'+user.image)" alt=""  class="aimage">
+            <img v-if="user.image!=null" :src="require('../assets/userimage/'+user.image)" alt="xxxx"  class="aimage">
+            <img class="aimage" v-else src="../assets/logo.png">
           </router-link>
           
           <span style="position: relative; top:-40px; left:80px">{{user.nickname}}</span>

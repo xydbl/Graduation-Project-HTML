@@ -1,10 +1,15 @@
 <template>
   <div>
+    <div style="margin-top: 20px">
+        <el-button @click="toggleSelection()">取消选择</el-button>
+        <el-button @click="delAll">删除选中</el-button>
+    </div>
     <el-table
         ref="multipleTable"
         :data="tableData"
         tooltip-effect="dark"
         style="width: 100%"
+        row-key="bid"
         @selection-change="handleSelectionChange">
 
         <el-table-column
@@ -16,7 +21,10 @@
         prop="bimage"
         label="封面"
         width="320" align="center" height="90px">
-            <template slot-scope="scope"><img src="" alt=""></template>
+            <template slot-scope="scope">
+                <img v-if="scope.row.bimage!=null&&scope.row.bimage!=''" :src="require('../assets/blogimage/'+scope.row.bimage)" alt="" style="width:160px;height:90px;">
+                <img v-else src="../assets/White.png" alt="" style="width:160px;height:90px;">
+            </template>
         </el-table-column>
         <el-table-column
         prop="btitle"
@@ -37,11 +45,6 @@
             </template>
         </el-table-column>
     </el-table>
-    <div style="margin-top: 20px">
-        <el-button @click="toggleSelection()">取消选择</el-button>
-        <el-button @click="delAll">删除选中</el-button>
-    </div>
-    
   </div>
 </template>
 

@@ -23,10 +23,12 @@
     </table> -->
     <div style="margin-top: 20px">
         <el-button @click="toggleSelection()">取消选择</el-button>
-        <el-button >删除选中</el-button>
-        <el-button  v-if="display">隐藏已通过</el-button>
-        <el-button  v-else>取消隐藏</el-button>
-        <el-button>隐藏未通过</el-button>
+        <el-button @click="delCommAll">删除选中</el-button>
+        <el-button @click="adoptCommAll">批量通过</el-button>
+        <el-button  v-if="display" @click="hide1">隐藏已通过</el-button>
+        <el-button  v-else @click="show1">取消隐藏(已通过)</el-button>
+        <el-button v-if="dispaly1" @click="hide2">隐藏未通过</el-button>
+        <el-button v-else @click="show2">取消隐藏(未通过)</el-button>
     </div>
     <el-table
         ref="multipleTable"
@@ -34,7 +36,7 @@
         tooltip-effect="dark"
         style="width: 100%"
         @selection-change="handleSelectionChange"
-        row-key="hid">
+        row-key="cid">
 
         <el-table-column
         type="selection"
@@ -51,7 +53,7 @@
         prop="messageId"
         label="评论人"
         width="240">
-            <template slot-scope="scope">{{scope.row.messageId}}</template>   
+            <template slot-scope="scope">{{scope.row.messageId=='' ? '游客' : scope.row.messageId }}</template>   
         </el-table-column>
         <el-table-column
         prop="ctime"
@@ -70,7 +72,7 @@
     <!-- 分页 -->
     <div class="pagination">
         <el-pagination
-        :page-size="6"
+        :page-size="7"
         :current-page="pageIndex"
         @current-change="handelCurrentChange"
         layout="prev, pager, next, jumper"
@@ -90,8 +92,11 @@ export default {
         // noList:[],
         multipleSelection: [],
         tableData:[],
+        // 数据备份
+        list:[],
         total:7,
         display:true,
+        dispaly1:true,
         pageIndex:1
       }
     },
@@ -128,6 +133,15 @@ export default {
           // console.log(res.data);
           this.tableData=res.data.records
           this.total=res.data.total
+          this.list=res.data.records
+          if(this.display==false){
+              this.hide1()
+          }
+          this.$nextTick(function(){
+            if(this.dispaly1==false){
+              this.hide2()
+            }
+          })
         },error=>{
           console.log(error.message);
         })
@@ -166,30 +180,31 @@ export default {
       //   }
       // },
       // 批量通过
-      // adoptCommAll(){
-      //   let comm=[]
-      //   this.noList.forEach(li=>{
-      //     if(li.checked){
-      //       let c={}
-      //       c.cid=li.cid
-      //       c.ctype=1
-      //       comm.push(c)
-      //     }
-      //   })
-      //   if(comm!=''){
-      //     this.$axios.post('http://localhost:8081/api/commentary/updateAll',comm)
-      //     .then(res=>{
-      //       if (res.data) {
-      //         alert('成功')
-      //         this.currentCommentary(sessionStorage.getItem('abid'))
-      //       }
-      //     },
-      //     error=>{
-      //       console.log(error.message);
-      //       alert('失败,请重试')
-      //     })
-      //   }
-      // },
+      adoptCommAll(){
+        let comm=[]
+        this.multipleSelection.forEach(li=>{
+          comm.push(li.cid)
+        })
+        if(comm==''){
+          this.$message.warning("选择为空")
+          return false
+        }
+        this.$axios.post('http://localhost:8081/api/commentary/updateAll',comm)
+        .then(res=>{
+          if (res.data) {
+            this.$message.success("成功")
+            // alert('成功')
+            this.currentCommentary(sessionStorage.getItem('abid'))
+          }else{
+            this.$message.warning("失败，请重试")
+          }
+        },
+        error=>{
+          console.log(error.message);
+          this.$message.warning("失败，请重试")
+          // alert('失败,请重试')
+        })
+      },
       // 批量删除
       delCommAll(){
         let ids=[]
@@ -208,12 +223,14 @@ export default {
         this.$axios.post('http://localhost:8081/api/commentary/delAll',ids)
         .then(res=>{
           if(res.data){
-            alert('成功')
+            // alert('成功')
+            this.$message.success("成功")
               // this.currentCommentary(sessionStorage.getItem('abid'))
           }
         },error=>{
           console.log(error.message);
-          alert('失败')
+          this.$message.warning("失败")
+          // alert('失败')
         })
       },
       // 删除评论
@@ -221,16 +238,56 @@ export default {
         this.$axios.get(`http://localhost:8081/api/commentary/del/${id}`)
         .then(res=>{
           if(res.data){
-            alert('删除成功')
+            // alert('删除成功')
+            this.$message.success("删除成功'")
+
             // this.currentCommentary(bid)
           }else(
-            alert('删除失败，请重试')
+            // alert('删除失败，请重试')
+            this.$message.warning("删除失败，请重试")
           )
         },
         error=>{
           console.log(error.message);
+          this.$message.warning("删除失败，请重试")
         })
-      }
+      },
+      // 隐藏已通过
+      hide1(){
+        this.display=false
+        this.tableData = this.tableData.filter((li)=>{
+          return li.ctype==0
+        })
+      },
+      show1(){
+        if(this.dispaly1){
+          // this.getCommentary()
+          this.tableData=this.list
+        }else{
+          this.tableData=this.list.filter((li)=>{
+            return li.ctype==1
+          })
+        }
+        this.$nextTick(function(){
+          this.display=true
+        })
+      },
+      hide2(){
+        this.dispaly1=false
+        this.tableData=this.tableData.filter((li)=>{
+          return li.ctype==1
+        })
+      },
+      show2(){
+        if(this.display){
+          this.tableData=this.list
+        }else{
+          this.tableData=this.list.filter((li)=>{
+            return li.ctype==0
+          })
+        }
+        this.dispaly1=true
+      },
     },
     computed:{
       // ...mapState('commentaryOptions',{commentaryList:'commentaryList'})
@@ -246,10 +303,10 @@ export default {
       //else{
       //   this.currentCommentary(abid)
       // }
-      setInterval(() => {
+      // setInterval(() => {
         // this.getCommentary()
         // this.setCommentaryList()
-      }, 200)
+      // }, 200)
       // setTimeout(() => {
       //   // this.setCommentaryList()
       // }, 100);

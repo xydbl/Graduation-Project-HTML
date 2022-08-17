@@ -3,8 +3,11 @@
     <div style="margin-top: 20px">
         <el-button @click="toggleSelection()">取消选择</el-button>
         <el-button @click="delAll">删除选中</el-button>
+        <el-button @click="updateReplyAll">批量通过</el-button>
         <el-button @click="displayReply" v-if="display">隐藏已通过</el-button>
-        <el-button @click="blockReply" v-else>取消隐藏</el-button>
+        <el-button @click="blockReply" v-else>取消隐藏(已通过)</el-button>
+        <el-button v-if="display1" @click="displayReply1">隐藏未通过</el-button>
+        <el-button v-else @click="blockReply1">取消隐藏(未通过)</el-button>
     </div>
     <el-table
         ref="multipleTable"
@@ -70,8 +73,11 @@ export default {
         return {
             multipleSelection: [],
             tableData:[],
+            // 数据备份
+            list:[],
             total:7,
             display:true,
+            display1:true,
             pageIndex:1
         }
     },
@@ -104,7 +110,8 @@ export default {
                 // console.log(res.data);
                 this.tableData=res.data.records
                 this.total=res.data.total
-                console.log(res.data);
+                // console.log(res.data);
+                this.list=res.data.records
             },error=>{
                 console.log(error.message);
             })
@@ -156,6 +163,27 @@ export default {
                 this.getReply()
             })
         },
+        updateReplyAll(){
+            let ids=[]
+            this.multipleSelection.forEach(li=>{
+                ids.push(li.hid)
+            })
+            if(ids==''){
+                this.$message.warning("选择为空")
+                return false
+            }
+            this.$axios.post('http://localhost:8081/api/reply',ids)
+            .then(res=>{
+                if(res.data){
+                    this.$message.success("成功")
+                }else{
+                    this.$message.warning('失败')
+                }
+            },error=>{
+                console.log(error.message);
+                this.message.warning("失败")
+            })
+        },
         //  隐藏
         displayReply(){
             this.tableData= this.tableData.filter((li)=>{
@@ -164,8 +192,31 @@ export default {
             this.display=false
         },
         blockReply(){
-            this.getReply()
+            // this.getReply()
+            if(this.display1){
+                this.tableData=this.list
+            }else{
+                this.tableData=this.list.filter((li)=>{
+                    return li.state==1
+                })
+            }
             this.display=true
+        },
+        displayReply1(){
+            this.tableData=this.tableData.filter((li)=>{
+                return li.state==1
+            })
+            this.display1=false
+        },
+        blockReply1(){
+            if(this.display){
+                this.tableData=this.list
+            }else{
+                this.tableData=this.list.filter((li)=>{
+                    return li.state==0
+                })
+            }
+            this.display1=true
         }
     },
     mounted() {

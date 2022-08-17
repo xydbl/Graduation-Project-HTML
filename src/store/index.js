@@ -1,6 +1,7 @@
 import Vuex from 'vuex'
 import Vue from 'vue'
 import axios from 'axios'
+import { padStart } from 'core-js/core/string'
 Vue.use(Vuex)
 
 // 用户相关
@@ -103,22 +104,24 @@ const blogOptions={
             state.bid=value
         },
         // 查询我的博客列表
-        GETMYBLOGLIST(state,value){
-            axios.get(`http://localhost:8081/api/blog/findByUid/${value}`)
-            .then(res=>{
-                state.myBlogList= res.data
-                // console.log(res.data);
-                // console.log(new Date(res.data[0].btime).getTime());
-            },error=>{
-                console.log(error.message);
-            })
-        },
+        // GETMYBLOGLIST(state,value){
+        //     axios.post('http://localhost:8081/api/blog/page/uid',{
+        //         id:value.id,
+        //         pageIndex:value.pageIndex||1,
+        //         pageSize:value.pageSize||6
+        //     })
+        //     .then(res=>{
+        //         state.myBlogList= res.data.records
+        //     },error=>{
+        //         console.log(error.message);
+        //     })
+        // },
         // 对myblogList中的数据进行处理
-        SETMYBLOGLISTTIME(state){
-            state.myBlogList.forEach(li => {
-                li.btime=new Date(li.btime).getFullYear()
-            });
-        },
+        // SETMYBLOGLISTTIME(state){
+        //     state.myBlogList.forEach(li => {
+        //         li.btime=new Date(li.btime).getFullYear()
+        //     });
+        // },
         // 正在查看的博客
         CURRENTBLOG(state,value){
             axios.get(`http://localhost:8081/api/blog/findByBid/${value}`)

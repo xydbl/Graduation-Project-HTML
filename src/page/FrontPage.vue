@@ -2,25 +2,25 @@
   <div style="border-top: 2px solid red; "> 
     <!-- style="border-top: 2px solid red; -->
     
-    <!-- 搜索 -->
-    <div class="searchBar">
-        <input type="text" style="height:36px;width:360px;" placeholder="请输入要搜索的内容" @input="searchEnd" v-model="search" @keyup.enter="SearchBlog">
-        <el-button type="primary" icon="el-icon-search" @click="SearchBlog">搜索</el-button>
-        <!-- <el-button icon="el-icon-search" circle></el-button> -->
-    </div>
     <!-- 轮播图 -->
+    <div>&nbsp</div>
     <div class="carousel">
-        <template>
+        <!-- <template> -->
         <el-carousel :interval="4000" type="card" height="300px">
             <el-carousel-item v-for="item in 4" :key="item">
             <h3 class="medium">{{ item }}</h3>
             </el-carousel-item>
         </el-carousel>
-        </template>
+        <!-- </template> -->
+    </div>
+    <!-- 搜索 -->
+    <div class="searchBar">
+        <input type="text" style="height:36px;width:360px;" placeholder="请输入要搜索的内容" v-model="search" @keyup.enter="SearchBlog">
+        <el-button type="primary" icon="el-icon-search" @click="SearchBlog">搜索</el-button>
     </div>
     <!-- 首页导航 -->
     <div class="navigation">
-        <ul>
+        <!-- <ul>
             <li>新闻</li>
             <li>军事</li>
             <li>国内</li>
@@ -29,12 +29,12 @@
             <li>电影</li>
             <li>音乐</li>
             <li>经典</li>
-        </ul>
+        </ul> -->
     </div>
     <!-- 首页展示 -->
     <div class="exhibit">
-        <div style="border-bottom: 2px solid red;">
-            <h2 style="position:relative;left:20px">news</h2>
+        <div style="border-bottom: 2px solid red;height:60px;">
+            <h2 style="position:relative;left:20px">Hot</h2>
         </div>
         <div class="blogExhibit">
             <div v-for="list in pageList.records" :key="list.bid">
@@ -48,7 +48,8 @@
                         btime:list.btime
                     }
                 }" >
-                    <img src="" style="width:160px;height:90px;">
+                    <img v-if="list.bimage!=null&&list.bimage!=''" :src="require('../assets/blogimage/'+list.bimage)" style="width:160px;height:90px;">
+                    <img v-else src="../assets/White.png" alt="">
                     <div class="false1" style="height: 90px;width: 600px; position: relative;left: 170px;top: -94px;;">
                         <strong>{{list.btitle}}</strong>
                     </div>
@@ -83,17 +84,25 @@ export default {
             titleBlog:'',
             // 搜索
             search:'',
+            oldSearch:'',
             // 分页查询的结果
             pageList:[],
             // 页数
-            pageIndex:1
+            pageIndex:1,
+            // 状态, 0 初始  1 按title查询 2 按type查询
+            state:0
         }
     },
     methods: {
         // 
         handelCurrentChange(val){
             this.pageIndex=val
-            this.getPage()
+            if(this.state==0){
+                this.getPage()
+            }
+            if(this.state==1){
+                this.SearchBlog()
+            }
         },
         // 分页查询
         getPage(){
@@ -110,17 +119,17 @@ export default {
             })
         },
         // 加载
-        getBlogList(){
-            this.$axios.get("http://localhost:8081/api/blog/findAll")
-            .then(res=>{
-                this.blogList= res.data
-                // this.blogList= this.blogList.filter((li)=>{
-                //     return li.bstate==1
-                // })
-            },error=>{
-                console.log(error.message);
-            })
-        },
+        // getBlogList(){
+        //     this.$axios.get("http://localhost:8081/api/blog/findAll")
+        //     .then(res=>{
+        //         this.blogList= res.data
+        //         // this.blogList= this.blogList.filter((li)=>{
+        //         //     return li.bstate==1
+        //         // })
+        //     },error=>{
+        //         console.log(error.message);
+        //     })
+        // },
         
         // 数据处理
         // listManage(){
@@ -128,29 +137,53 @@ export default {
         //         li.btime=new Date(li.btime).getFullYear()
         //     })
         // },
-        // 搜索
+
+        // 搜索 title 分页
         SearchBlog(){
-            this.$axios.get(`http://localhost:8081/api/blog/findLike/${this.search}`)
+            if(this.state==0){
+                this.pageIndex=1
+                this.state=1
+            }
+            if(this.search==''){
+                this.pageIndex=1
+                this.getPage()
+                this.state=0
+                return false
+            }
+            if(this.oldSearch==''){
+                this.oldSearch=this.search
+            }else {
+                if(this.oldSearch!=this.search){
+                    this.pageIndex=1
+                    this.oldSearch=this.search
+                }
+            }
+
+            this.$axios.post('http://localhost:8081/api/blog/page/likeTitle',{
+                title:this.search,
+                pageIndex:this.pageIndex,
+                pageSize:6
+            })
             .then(res=>{
-                this.blogList=res.data
-                // this.blogList= this.blogList.filter((li)=>{
-                //     return li.bstate==1
-                // })
+                this.pageList=res.data
             },
             error=>{
                 console.log(error.message);
             })
         },
-        searchEnd(){
-            if(this.search==''){
-                this.getBlogList()
-            }
-        },
+        // searchEnd(){
+        //     if(this.search==''){
+        //         // this.getBlogList()
+        //     }
+        // },
         // 按类型搜索
         searchType(){
-            this.$axios.get(`http://localhost:8081/api/blog/findByType/${x}`)
+            if(this.state!=2){
+                this.pageIndex=1
+                this.state=2
+            }
+            this.$axios.post('http://localhost:8081/api/blog/page/likeType',{})
             .then(res=>{
-                this.blogList=res.data
             },error=>{
                 console.log(error.message);
             })
@@ -158,7 +191,7 @@ export default {
         // 试验
     },
     mounted(){
-        this.getBlogList()
+        // this.getBlogList()
         this.getPage()
         // setInterval(() => {
         //     this.listManage()
@@ -185,11 +218,11 @@ export default {
 .searchBar{
     position: relative;
     width: 460px;
-    left: 450px;
-    top: -35px;
+    left: 550px;
+    top: 20px;
 }
 
-.navigation{
+/* .navigation{
     width: 250px;
     height:150px;
     line-height: 2px;
@@ -203,11 +236,13 @@ export default {
     padding: 6px;
     margin-top: 10px;
     cursor: pointer;
-    /* position: relative; */
-}
+    position: relative;
+} */
 
 .carousel{
     position: relative;
+    /* width: 100%; */
+    top: -40px;
 }
 .el-carousel__item h3 {
     color: #475669;
@@ -231,7 +266,7 @@ export default {
     padding: 4px;
     width: 1000px;
     height: 1000px;
-    top: -100px;
+    top: 50px;
     left: 300px;
     border-left: 2px solid black;
 }
@@ -259,6 +294,6 @@ export default {
 .pagination{
     position: relative;
     left: 460px;
-    top: -90px;
+    top: 20px;
 }
 </style>
