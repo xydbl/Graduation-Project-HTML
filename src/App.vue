@@ -49,6 +49,7 @@ export default {
       if(y-x<7){
         this.$store.commit('userOptions/UPDATAISLOGIN',true)
         this.$store.commit('userOptions/UPDATAUSER',res.data)
+        this.$store.commit('userOptions/TOURISTS',false)
       }else{
         this.$store.commit('userOptions/UPDATAISLOGIN',false)
         localStorage.setItem('username','')

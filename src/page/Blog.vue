@@ -270,6 +270,14 @@ export default {
           console.log(error.message);
         })
       },
+      addBlogClick(){
+        this.$axios.get(`http://localhost:8081/api/blog/addClick/${this.bid||this.blog.bid}`)
+        .then(res=>{
+          // console.log("ok");
+        },error=>{
+          console.log(error.message);
+        })
+      }
     },
     computed:{
       ...mapState('userOptions',{user:'user',blogUser:'blogUser'}),
@@ -318,10 +326,9 @@ export default {
         setTimeout(() => {
           this.getCommNum()
         }, 500);
-        // setInterval(() => {
-        //   // this.approvedComment()
-        // }, 500);
-       
+        setTimeout(() => {
+          this.addBlogClick()
+        }, 6000);
     }
 }
 </script>

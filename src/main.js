@@ -8,7 +8,7 @@ import {Menu,Submenu,MenuItem,Button,Input,Form,FormItem,
 	Pagination,Carousel,CarouselItem,
 	Dropdown,DropdownMenu,DropdownItem,
 	Avatar,DatePicker,Upload,Badge,Table,TableColumn,
-	Message
+	Message,Tag,
 } from 'element-ui'
 // mavon-editor 引入
 import mavonEditor from 'mavon-editor'
@@ -39,6 +39,7 @@ Vue.use(Upload)
 Vue.use(Badge)
 Vue.use(Table)
 Vue.use(TableColumn)
+Vue.use(Tag)
 
 Vue.prototype.$message=Message
 // Vue.use(Breadcrumb)

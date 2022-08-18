@@ -3,7 +3,7 @@
     <div class="left">
         <img v-if="user.image!=null" :src="require('../assets/userimage/'+user.image)" alt="">
         <img v-else src="../assets/White.png" alt=""><br>
-        <span>昵称:{{user.username}}</span><br><br>
+        <span>昵称:{{user.nickname||user.username}}</span><br><br>
         <span style="font-size: 14px; opacity: .5;">注册时间:{{user.date1}}</span>
     </div>
 	<div class="right">
@@ -40,7 +40,18 @@
                 </el-table-column>
                 <el-table-column>
                     <template slot-scope="scope">
-                        <el-button>点击查看</el-button>
+                        <el-button>
+                            <router-link :to="{
+                                name:'blog',
+                                params:{
+                                    bid:scope.row.bid,
+                                    btitle:scope.row.btime,
+                                    btype:scope.row.btype,
+                                    bcontent:scope.row.bcontent,
+                                    btime:scope.row.btime
+                                }
+                            }">点击查看</router-link>
+                        </el-button>
                     </template>
                 </el-table-column>
             </el-table>

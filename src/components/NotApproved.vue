@@ -95,6 +95,8 @@ export default {
         // 数据备份
         list:[],
         total:7,
+        // 状态 0正常 1 隐藏已通过 2隐藏未通过 3 display和display1为空
+        state:0,
         display:true,
         dispaly1:true,
         pageIndex:1
@@ -116,7 +118,16 @@ export default {
       },
       handelCurrentChange(val){
         this.pageIndex=val
-        this.getCommentary()
+        if(this.state==0){
+          this.getCommentary()
+        }else if(this.state==1){
+          this.getNoApprovedComm()
+        }else if(this.state==2){
+          this.getApprovedComm()
+        }else{
+          return false
+        }
+        
       },
       // 获取评论
       getCommentary(){
@@ -133,15 +144,40 @@ export default {
           // console.log(res.data);
           this.tableData=res.data.records
           this.total=res.data.total
-          this.list=res.data.records
           if(this.display==false){
               this.hide1()
           }
-          this.$nextTick(function(){
-            if(this.dispaly1==false){
-              this.hide2()
-            }
-          })
+          if(this.dispaly1==false){
+            this.hide2()
+          }
+          
+        },error=>{
+          console.log(error.message);
+        })
+      },
+      // 隐藏已通过
+      getNoApprovedComm(){
+        let bid=sessionStorage.getItem("abid")
+        this.$axios.post('http://localhost:8081/api/commentary/findNoApprovedComm',{
+          bid:this.bid||bid,
+          pageIndex:this.pageIndex,
+          pageSize:7
+        }).then(res=>{
+          this.tableData=res.data.records
+          this.total=res.data.total
+        },error=>{
+          console.log(error.message);
+        })
+      },
+      getApprovedComm(){
+        let bid=sessionStorage.getItem("abid")
+        this.$axios.post('http://localhost:8081/api/commentary/findApprovedComm',{
+          bid:this.bid||bid,
+          pageIndex:this.pageIndex,
+          pageSize:7
+        }).then(res=>{
+          this.tableData=res.data.records
+          this.total=res.data.total
         },error=>{
           console.log(error.message);
         })
@@ -156,6 +192,15 @@ export default {
           if(res.data){
             // alert('审核通过成功')
             this.$message.success('success')
+            if(this.state==0){
+              this.getCommentary()
+            }else if(this.state==1){
+              this.getNoApprovedComm()
+            }else if(this.state==2){
+              this.getApprovedComm()
+            }else{
+              return false
+            }
             // this.currentCommentary(bid)
           }else{
             // alert('审核失败，请重试')
@@ -194,7 +239,16 @@ export default {
           if (res.data) {
             this.$message.success("成功")
             // alert('成功')
-            this.currentCommentary(sessionStorage.getItem('abid'))
+            // this.currentCommentary(sessionStorage.getItem('abid'))
+            if(this.state==0){
+              this.getCommentary()
+            }else if(this.state==1){
+              this.getNoApprovedComm()
+            }else if(this.state==2){
+              this.getApprovedComm()
+            }else{
+              return false
+            }
           }else{
             this.$message.warning("失败，请重试")
           }
@@ -225,6 +279,15 @@ export default {
           if(res.data){
             // alert('成功')
             this.$message.success("成功")
+            if(this.state==0){
+              this.getCommentary()
+            }else if(this.state==1){
+              this.getNoApprovedComm()
+            }else if(this.state==2){
+              this.getApprovedComm()
+            }else{
+              return false
+            }
               // this.currentCommentary(sessionStorage.getItem('abid'))
           }
         },error=>{
@@ -240,7 +303,15 @@ export default {
           if(res.data){
             // alert('删除成功')
             this.$message.success("删除成功'")
-
+            if(this.state==0){
+              this.getCommentary()
+            }else if(this.state==1){
+              this.getNoApprovedComm()
+            }else if(this.state==2){
+              this.getApprovedComm()
+            }else{
+              return false
+            }
             // this.currentCommentary(bid)
           }else(
             // alert('删除失败，请重试')
@@ -254,39 +325,52 @@ export default {
       },
       // 隐藏已通过
       hide1(){
+        this.pageIndex=1
         this.display=false
-        this.tableData = this.tableData.filter((li)=>{
-          return li.ctype==0
-        })
+        if(!this.dispaly1){
+          this.state=3
+          this.tableData=[]
+          this.total=1
+        }else{
+          this.getNoApprovedComm()
+          this.state=1
+        }
       },
       show1(){
-        if(this.dispaly1){
-          // this.getCommentary()
-          this.tableData=this.list
+        this.pageIndex=1
+        this.display=true
+        if(!this.dispaly1){
+          this.getApprovedComm()
+          this.state=2
         }else{
-          this.tableData=this.list.filter((li)=>{
-            return li.ctype==1
-          })
+          this.getCommentary()
+          this.state=0
         }
-        this.$nextTick(function(){
-          this.display=true
-        })
       },
+      // 隐藏未通过
       hide2(){
+        this.pageIndex=1
         this.dispaly1=false
-        this.tableData=this.tableData.filter((li)=>{
-          return li.ctype==1
-        })
+        if(!this.display){
+          this.state=3
+          this.tableData=[]
+          this.total=1
+        }else{
+          this.getApprovedComm()
+          this.state=2
+        }
       },
       show2(){
-        if(this.display){
-          this.tableData=this.list
-        }else{
-          this.tableData=this.list.filter((li)=>{
-            return li.ctype==0
-          })
-        }
+        this.pageIndex=1
         this.dispaly1=true
+        if(this.display==false){
+          this.getNoApprovedComm()
+          this.state=1
+        }
+        if(this.display==true){
+          this.getCommentary()
+          this.state=0
+        }
       },
     },
     computed:{
@@ -300,6 +384,7 @@ export default {
         sessionStorage.setItem("abid",this.bid)
       }
       this.getCommentary()
+      // this.getNoApprovedComm()
       //else{
       //   this.currentCommentary(abid)
       // }

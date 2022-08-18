@@ -73,8 +73,8 @@ export default {
         return {
             multipleSelection: [],
             tableData:[],
-            // 数据备份
-            list:[],
+            // 状态 0正常 1 隐藏已通过 2隐藏未通过 3 display和display1为false
+            state:0,
             total:7,
             display:true,
             display1:true,
@@ -96,7 +96,16 @@ export default {
         },
         handelCurrentChange(val){
             this.pageIndex=val
-            this.getReply()
+            if(this.state==0){
+                this.getReply()
+            }else if(this.state==1){
+                this.getNoApp()
+            }else if(this.state==2){
+                this.getApp
+            }else{
+                return false
+            }
+            
         },
         // 获取
         getReply(){
@@ -111,7 +120,6 @@ export default {
                 this.tableData=res.data.records
                 this.total=res.data.total
                 // console.log(res.data);
-                this.list=res.data.records
             },error=>{
                 console.log(error.message);
             })
@@ -122,6 +130,15 @@ export default {
             .then(res=>{
                 this.getReply()
                 this.$message.success('已删除')
+                if(this.state==0){
+                    this.getReply()
+                }else if(this.state==1){
+                    this.getNoApp()
+                }else if(this.state==2){
+                    this.getApp
+                }else{
+                    return false
+                }
             },error=>{
                 console.log(error.message);
             })
@@ -144,6 +161,15 @@ export default {
                 if(res.data){
                     this.getReply()
                     this.$message.success('已删除')
+                    if(this.state==0){
+                        this.getReply()
+                    }else if(this.state==1){
+                        this.getNoApp()
+                    }else if(this.state==2){
+                        this.getApp
+                    }else{
+                        return false
+                    }
                 }else{
                     this.$message.error('删除失败')
                 }
@@ -158,6 +184,15 @@ export default {
                 state:1
             }).then(res=>{
                 this.$message.success('已通过')
+                if(this.state==0){
+                    this.getReply()
+                }else if(this.state==1){
+                    this.getNoApp()
+                }else if(this.state==2){
+                    this.getApp
+                }else{
+                    return false
+                }
             },error=>{
                 console.log(error.message);
                 this.getReply()
@@ -172,10 +207,19 @@ export default {
                 this.$message.warning("选择为空")
                 return false
             }
-            this.$axios.post('http://localhost:8081/api/reply',ids)
+            this.$axios.post('http://localhost:8081/api/reply/updateAll',ids)
             .then(res=>{
                 if(res.data){
                     this.$message.success("成功")
+                    if(this.state==0){
+                        this.getReply()
+                    }else if(this.state==1){
+                        this.getNoApp()
+                    }else if(this.state==2){
+                        this.getApp
+                    }else{
+                        return false
+                    }
                 }else{
                     this.$message.warning('失败')
                 }
@@ -184,39 +228,81 @@ export default {
                 this.message.warning("失败")
             })
         },
+        getNoApp(){
+            let bid=sessionStorage.getItem('abid')
+            this.$axios.post('http://localhost:8081/api/reply/findNoApp',{
+                bid:bid,
+                pageIndex:this.pageIndex,
+                pageSize:7
+            }).then(res=>{
+                // console.log(res.data);
+                this.tableData=res.data.records
+                this.total=res.data.total
+            },error=>{
+                console.log(error.message);
+            })
+        },
+        getApp(){
+            let bid=sessionStorage.getItem('abid')
+            this.$axios.post('http://localhost:8081/api/reply/findApp',{
+                bid:bid,
+                pageIndex:this.pageIndex,
+                pageSize:7
+            }).then(res=>{
+                // console.log(res.data);
+                this.tableData=res.data.records
+                this.total=res.data.total
+            },error=>{
+                console.log(error.message);
+            })
+        },
         //  隐藏
         displayReply(){
-            this.tableData= this.tableData.filter((li)=>{
-                return li.state==0
-            })
+            this.pageIndex=1
             this.display=false
+            if(!this.display1){
+                this.tableData=[]
+                this.total=1
+                this.state=3
+            }else{
+                this.state=1
+                this.getNoApp()
+            }
         },
         blockReply(){
-            // this.getReply()
-            if(this.display1){
-                this.tableData=this.list
-            }else{
-                this.tableData=this.list.filter((li)=>{
-                    return li.state==1
-                })
-            }
+            this.pageIndex=1
             this.display=true
+            if(this.display1){
+                this.state=0
+                this.getReply()
+            }else{
+                this.state=2
+                this.getApp()
+            }
         },
+        // 隐藏
         displayReply1(){
-            this.tableData=this.tableData.filter((li)=>{
-                return li.state==1
-            })
+            this.pageIndex=1
             this.display1=false
+            if(!this.display){
+                this.tableData=[]
+                this.total=1
+                this.state=3
+            }else{
+                this.state=2
+                this.getApp()
+            }
         },
         blockReply1(){
-            if(this.display){
-                this.tableData=this.list
-            }else{
-                this.tableData=this.list.filter((li)=>{
-                    return li.state==0
-                })
-            }
+            this.pageIndex=1
             this.display1=true
+            if(!this.display){
+                this.state=1
+                this.getNoApp()
+            }else{
+                this.state=0
+                this.getReply()
+            }
         }
     },
     mounted() {

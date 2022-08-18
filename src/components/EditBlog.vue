@@ -8,7 +8,7 @@
 			<span class="bcontent">内容：</span>
 		</div>
 		<div style="position: absolute; right:30px;top:20px">
-			<button class="btn" @click="editFinish">修改完成</button>
+			<button class="btn" @click="editFinish">修改完成/发布</button>
 		</div>
 		<div class="right">
 			
@@ -102,7 +102,8 @@ export default {
 				bid:this.bid||this.blog.bid,
 				btitle:this.title,
 				btype:this.type,
-				bcontent:this.content
+				bcontent:this.content,
+				bstate:1
 			}).then(res=>{
 				// res.data
 				this.$router.back()
@@ -210,7 +211,7 @@ span{
 	position: relative;
 	/* top: 60px; */
 	/* left: 700px; */
-	width: 80px;
+	width: 100px;
 	height: 30px;
 }
 </style>

@@ -182,7 +182,7 @@ import {mapState ,mapGetters,mapActions,mapMutations} from 'vuex'
 	width: 370px;
 	text-align: left;
 	position: relative;
-	left: 52px;
+	left: 56px;
 }
 .msg input{
 	height: 35px;

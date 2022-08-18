@@ -8,8 +8,8 @@
 			<!-- <div class="greet">欢 迎 您 使 用</div> -->
 			<div class="login" style="width:190px;height:100%;">
 				<div v-if="!isLogin" style="font-size:18px">
-					<span style="cursor: pointer;" @click="touristsLogin">游客登录</span>
-					<span style="color:black"> / </span>
+					<!-- <span style="cursor: pointer;" @click="touristsLogin">游客登录</span>
+					<span style="color:black"> / </span> -->
 					<router-link to="/login" style="color:white">登录</router-link>
 					<span style="color:black"> / </span>
 					<router-link to="/register" style="color:white">注册</router-link>

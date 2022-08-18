@@ -87,7 +87,7 @@ const userOptions={
             // 登录状态
             isLogin:false,
             // 是否以游客身份登录
-            isTouristsLogin:false
+            isTouristsLogin:true
         },
         blogUser:{}
     },

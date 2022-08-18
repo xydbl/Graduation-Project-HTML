@@ -7,20 +7,36 @@
     <div class="carousel">
         <!-- <template> -->
         <el-carousel :interval="4000" type="card" height="300px">
-            <el-carousel-item v-for="item in 4" :key="item">
-            <h3 class="medium">{{ item }}</h3>
+            <el-carousel-item v-for="item in cardItem" :key="item.bid">
+            <!-- <h3 class="medium">{{ item }}</h3> -->
+                <router-link :to="{
+                    name:'blog',
+                    params:{
+                    bid:item.bid,
+                    btitle:item.btime,
+                    btype:item.btype,
+                    bcontent:item.bcontent,
+                    btime:item.btime
+                    }
+                }">
+                    <img v-if="item.bimage!=null&&item.bimage!=''" :src="require('../assets/blogimage/'+item.bimage)" alt="">
+                    <img v-else src="../assets/White.png" alt="">
+                </router-link>
             </el-carousel-item>
         </el-carousel>
         <!-- </template> -->
     </div>
     <!-- 搜索 -->
     <div class="searchBar">
+        <div class="tag">
+            <el-tag size="" v-for=" li in typeList" @click="searchType(li.blogtype)" :key="li.tid" style="margin-left:20px;cursor: pointer;">{{li.blogtype}}</el-tag>
+        </div>
         <input type="text" style="height:36px;width:360px;" placeholder="请输入要搜索的内容" v-model="search" @keyup.enter="SearchBlog">
         <el-button type="primary" icon="el-icon-search" @click="SearchBlog">搜索</el-button>
     </div>
     <!-- 首页导航 -->
-    <div class="navigation">
-        <!-- <ul>
+    <!-- <div class="navigation">
+        <ul>
             <li>新闻</li>
             <li>军事</li>
             <li>国内</li>
@@ -29,8 +45,8 @@
             <li>电影</li>
             <li>音乐</li>
             <li>经典</li>
-        </ul> -->
-    </div>
+        </ul>
+    </div> -->
     <!-- 首页展示 -->
     <div class="exhibit">
         <div style="border-bottom: 2px solid red;height:60px;">
@@ -50,7 +66,7 @@
                 }" >
                     <img v-if="list.bimage!=null&&list.bimage!=''" :src="require('../assets/blogimage/'+list.bimage)" style="width:160px;height:90px;">
                     <img v-else src="../assets/White.png" alt="">
-                    <div class="false1" style="height: 90px;width: 600px; position: relative;left: 170px;top: -94px;;">
+                    <div class="false1" style="height: 90px;width: 600px; position: relative;left: 170px;top: -94px;">
                         <strong>{{list.btitle}}</strong>
                     </div>
                     <div style="position: relative;left:780px;width:160px;top:-185px;height:90px;text-align:center;line-height:70px;">
@@ -90,7 +106,9 @@ export default {
             // 页数
             pageIndex:1,
             // 状态, 0 初始  1 按title查询 2 按type查询
-            state:0
+            state:0,
+            typeList:[],
+            cardItem:[]
         }
     },
     methods: {
@@ -99,10 +117,21 @@ export default {
             this.pageIndex=val
             if(this.state==0){
                 this.getPage()
-            }
-            if(this.state==1){
+            }else if(this.state==1){
                 this.SearchBlog()
+            }else if(this.state==2){
+                this.searchType()
             }
+        },
+        // 获取轮播图 数据
+        getBlogCard(){
+            this.$axios.get('http://localhost:8081/api/blog/findCard')
+            .then(res=>{
+                // console.log(res.data);
+                this.cardItem=res.data
+            },error=>{
+                console.log(error.message);
+            })
         },
         // 分页查询
         getPage(){
@@ -177,22 +206,38 @@ export default {
         //     }
         // },
         // 按类型搜索
-        searchType(){
+        searchType(type){
             if(this.state!=2){
                 this.pageIndex=1
                 this.state=2
             }
-            this.$axios.post('http://localhost:8081/api/blog/page/likeType',{})
+            this.$axios.post('http://localhost:8081/api/blog/page/likeType',{
+                type:type,
+                pageIndex:this.pageIndex,
+                pageSize:6
+            })
             .then(res=>{
+                this.pageList=res.data
+            },error=>{
+                console.log(error.message);
+            })
+        },
+        // 查询类型
+        getBlogType(){
+            this.$axios.get('http://localhost:8081/api/blogType/findR')
+            .then(res=>{
+                // console.log(res.data);
+                this.typeList=res.data
             },error=>{
                 console.log(error.message);
             })
         }
-        // 试验
     },
     mounted(){
         // this.getBlogList()
         this.getPage()
+        this.getBlogType()
+        this.getBlogCard()
         // setInterval(() => {
         //     this.listManage()
         // }, 1000);
@@ -293,7 +338,13 @@ export default {
 }
 .pagination{
     position: relative;
+    width: 800px;
     left: 460px;
-    top: 20px;
+    /* top: 20px; */
+    margin-top: 40px;
+}
+.tag{
+    position: relative;
+    left: -420px;
 }
 </style>

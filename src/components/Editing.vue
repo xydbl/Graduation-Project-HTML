@@ -125,7 +125,8 @@ export default {
 				btype:this.type,
 				bcontent:this.content,
 				btime:this.newTime,
-				bstate:1
+				bstate:1,
+				bclick:0
 			}).then(res=>{
 				if(res.data){
 					// alert("发布成功")
@@ -230,6 +231,7 @@ export default {
 	position: relative;
 	top: -485px;
 	left: 1040px;
+	width: 200px;
 }
 .top button{
 	margin: 10px;
