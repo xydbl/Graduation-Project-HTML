@@ -60,18 +60,18 @@ import {mapState ,mapGetters,mapActions,mapMutations} from 'vuex'
 					})
 				}
 				this.$store.commit('userOptions/UPDATAISLOGIN',false)
-				this.$store.commit('userOptions/TOURISTS',false)
+				this.$store.commit('userOptions/TOURISTS',true)
 				// this.$store.commit('userOptions/')
 				this.$router.push({path:'/frontPage'})
 				localStorage.setItem('isLoginOut',false)
 			},
-			touristsLogin(){
-				let sure=confirm(`确定以游客身份登录吗？若以游客身份登录，本网站不会记录您的所有信息，网站部分功能将不会对您开放`)
-				if(sure){
-					this.$store.commit('userOptions/UPDATAISLOGIN',true)
-					this.$store.commit('userOptions/TOURISTS',true)
-				}
-			}
+			// touristsLogin(){
+			// 	let sure=confirm(`确定以游客身份登录吗？若以游客身份登录，本网站不会记录您的所有信息，网站部分功能将不会对您开放`)
+			// 	if(sure){
+			// 		this.$store.commit('userOptions/UPDATAISLOGIN',true)
+			// 		this.$store.commit('userOptions/TOURISTS',true)
+			// 	}
+			// }
     	},
 		computed:{
 			...mapState('userOptions',{user:'user'}),

@@ -102,6 +102,7 @@ export default {
       // 获取评论 包含点赞等信息
       getComm(){
         let username=localStorage.getItem("username")
+        // console.log(username,this.blog.bid,this.bid);
         this.$axios.post('http://localhost:8081/api/commentary/findByBid',{
           bid:this.bid||this.blog.bid,
           s:this.user.userName||username
@@ -143,9 +144,13 @@ export default {
 
       // 点赞功能
       addD(cid){
+        // if(this.user.isTouristsLogin){
+        //   this.$message.warning('')
+        //   return false
+        // }
         this.$axios.post('http://localhost:8081/api/dTable/add',{
           dcid:cid,
-          duser:this.user.userName
+          duser:this.user.userName||'游客'
         }).then(res=>{
           this.getComm()
         },error=>{
@@ -250,6 +255,10 @@ export default {
       },
       // 收藏博客
       collectBlog(){
+        if(this.user.isTouristsLogin){
+          this.$message.warning("注册后才可所有此功能")
+          return false
+        }
         this.$axios.post('http://localhost:8081/api/collect/add',{
           uid:this.user.uid,
           bid:this.blog.bid||this.bid,
@@ -308,21 +317,24 @@ export default {
           this.getBlogUserMessage(this.bid)
           sessionStorage.setItem("getbid",this.bid)
           // this.currentCommentary(this.bid)
-          this.getComm()
+          // this.getComm()
         }else{
           let bid=sessionStorage.getItem("getbid")
           this.getBlogUserMessage(bid)
           this.currentBlog(bid)
           // this.currentCommentary(bid)
-          this.getComm()
+          // this.getComm()
         }
         setTimeout(() => {
           this.username=this.blogUser.username 
           // this.commentaryBlog()
-          this.getComm()
+          // this.getComm()
           // this.test2()
           
         }, 200);
+        setTimeout(() => {
+          this.getComm()
+        }, 300);
         setTimeout(() => {
           this.getCommNum()
         }, 500);

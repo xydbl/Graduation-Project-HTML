@@ -41,7 +41,7 @@
                 <el-table-column>
                     <template slot-scope="scope">
                         <el-button>
-                            <router-link :to="{
+                            <router-link replace :to="{
                                 name:'blog',
                                 params:{
                                     bid:scope.row.bid,

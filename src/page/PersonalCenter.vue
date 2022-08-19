@@ -13,7 +13,8 @@
 			  <!-- <span>我发布的博客</span> -->
 			  <router-link to="/personalcenter/pushblog">我发布的博客</router-link><hr>
 			  <router-link to="/editing">发布博客</router-link><hr>
-			  <router-link to="/personalcenter/collect">收藏</router-link>
+			  <router-link to="/personalcenter/collect">收藏</router-link><hr>
+			  <router-link to="/personalcenter/blogType">类型管理</router-link>
 			  <!-- <router-link to="/personalcenter/editblog">修改博客</router-link><hr> -->
 			  <!-- <router-link to="/personalcenter/audit">审核博客评论</router-link><hr> -->
 			  <!-- <router-link to="/personalcenter/history" >历史记录</router-link> -->

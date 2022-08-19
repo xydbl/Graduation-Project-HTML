@@ -20,6 +20,7 @@ import UploadImage from '../components/UploadImage.vue'
 import ShowUsrInfo from '../page/ShowUsrInfo.vue'
 import Collect from '../page/Collect.vue'
 import ReplyApp from '../components/ReplyApp.vue'
+import BlogType from '../components/BlogType.vue'
 
 const router= new VueRouter({
     routes:[
@@ -174,6 +175,12 @@ const router= new VueRouter({
                     component:Collect,
                     meta:{isAuth:true}
                 },
+                {
+                    path:'blogType',
+                    name:'blogType',
+                    component:BlogType,
+                    meta:{isAuth:true}
+                }
                 // // 历史记录
                 // {
                 //     path:'history',

@@ -13,7 +13,7 @@
                     name:'blog',
                     params:{
                     bid:item.bid,
-                    btitle:item.btime,
+                    btitle:item.btitle,
                     btype:item.btype,
                     bcontent:item.bcontent,
                     btime:item.btime
