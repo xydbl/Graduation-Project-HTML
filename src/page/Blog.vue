@@ -337,7 +337,7 @@ export default {
         }, 300);
         setTimeout(() => {
           this.getCommNum()
-        }, 500);
+        }, 700);
         setTimeout(() => {
           this.addBlogClick()
         }, 6000);

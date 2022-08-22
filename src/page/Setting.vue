@@ -13,7 +13,7 @@
           <router-link to="/setting/uploadimage">
             <!-- <el-avatar src="../assets/logo.png" style="width:70px;height:70px; position:relative;top:-50px;left:10px; float:left;">
             </el-avatar> -->
-            <img v-if="user.image!=null" :src="require('../assets/userimage/'+user.image)" alt="xxxx"  class="aimage">
+            <img v-if="user.image!=null&&user.image!=''" :src="require('../assets/userimage/'+user.image)" alt="xxxx"  class="aimage">
             <img class="aimage" v-else src="../assets/logo.png">
           </router-link>
           
@@ -59,7 +59,7 @@ export default {
       // 个性签名
       setSig(){
         this.isSig=true
-        this.signature=this.usMsg.signature
+        this.signature=this.user.signature
         this.$nextTick(function(){
           this.$refs.getFocus.focus()
         })
@@ -76,7 +76,8 @@ export default {
         },
         error=>{
           console.log(error.message);
-          alert('修改失败')
+          // alert('修改失败')
+          this.$message.warning("修改失败")
         })
       },
       // 放弃修改

@@ -55,9 +55,11 @@
                             bimage:scope.row.bimage,
                             bcontent:scope.row.bcontent
                         }
-                    }">修改/发布博客</router-link>
-                </el-button>
-                <el-button size="mini" @click="delBlog(scope.row.bid)">删除</el-button>
+                    }">修改博客</router-link>
+                </el-button><br>
+                <el-button size="mini" @click="delBlog(scope.row.bid)" style="margin-top:10px;">删除</el-button>
+                <el-button size="mini" v-if="scope.row.bstate==1" @click="updateBlog(scope.row.bid)">取消发布</el-button>
+                <el-button size="mini" v-else @click="pushBlog(scope.row.bid)">发布</el-button>
             </template>
         </el-table-column>
     </el-table>
@@ -134,6 +136,31 @@ export default {
                 })
             }
         },
+        // 取消发布
+        updateBlog(bid){
+            this.$axios.post('http://localhost:8081/api/blog/save',{
+                bid:bid,
+                bstate:0
+            }).then(res=>{
+                this.$message.success("成功")
+                this.getMyBlogPage()
+            },error=>{
+                this.$message.warning("失败")
+                console.log(error.message);
+            })
+        },
+        pushBlog(bid){
+            this.$axios.post('http://localhost:8081/api/blog/save',{
+                bid:bid,
+                bstate:1
+            }).then(res=>{
+                this.getMyBlogPage()
+                this.$message.success("成功")
+            },error=>{
+                this.$message.warning("失败")
+                console.log(error.message);
+            })
+        }
     },
     computed:{
         ...mapState('userOptions',{user:'user'}),

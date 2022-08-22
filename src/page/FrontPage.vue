@@ -50,7 +50,7 @@
     <!-- 首页展示 -->
     <div class="exhibit">
         <div style="border-bottom: 2px solid red;height:60px;">
-            <h2 style="position:relative;left:20px">Hot</h2>
+            <h2 style="position:relative;left:20px">new</h2>
         </div>
         <div class="blogExhibit">
             <div v-for="list in pageList.records" :key="list.bid">
@@ -65,7 +65,7 @@
                     }
                 }" >
                     <img v-if="list.bimage!=null&&list.bimage!=''" :src="require('../assets/blogimage/'+list.bimage)" style="width:160px;height:90px;">
-                    <img v-else src="../assets/White.png" alt="">
+                    <img v-else src="../assets/White.png" alt="" style="width:160px;height:90px;">
                     <div class="false1" style="height: 90px;width: 600px; position: relative;left: 170px;top: -94px;">
                         <strong>{{list.btitle}}</strong>
                     </div>
@@ -287,6 +287,9 @@ export default {
 .carousel{
     position: relative;
     /* width: 100%; */
+    left: 2%;
+    width: 96%;
+    /* right: 2%; */
     top: -40px;
 }
 .el-carousel__item h3 {

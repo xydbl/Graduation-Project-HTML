@@ -72,12 +72,14 @@ import {mapState ,mapGetters,mapActions,mapMutations} from 'vuex'
 						// this.getUserMessage(res.data.username)
 					},
 					error=>{
-						alert('登录失败!')
+						// alert('登录失败!')
+						this.$message.warning("用户名或密码错误")
 						console.log(error.message);
 						this.getIdentifyCode()
 					})
 				}else{
-					alert('验证码错误')
+					// alert()
+					this.$message.warning('验证码错误')
 					this.getIdentifyCode()
 				}
 				

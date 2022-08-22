@@ -8,7 +8,8 @@
 			<span class="bcontent">内容：</span>
 		</div>
 		<div style="position: absolute; right:30px;top:20px">
-			<button class="btn" @click="editFinish">修改完成/发布</button>
+			<button class="btn" @click="saveEdit">保存</button>&nbsp
+			<button class="btn" @click="editFinish">发布</button>
 		</div>
 		<div class="right">
 			
@@ -96,7 +97,22 @@ export default {
                 this.$refs.md.$img2Url(pos,url)
             })
         },
-        // 修改完成
+		// 保存
+		saveEdit(){
+			this.$axios.post('http://localhost:8081/api/blog/save',{
+				bid:this.bid||this.blog.bid,
+				btitle:this.title,
+				btype:this.type,
+				bcontent:this.content,
+			}).then(res=>{
+				// res.data
+				// this.$router.go(0)
+				this.$message.success("保存成功")
+			},error=>{
+				console.log(error.message);
+			})
+		},
+        // 发布
 		editFinish(){
 			this.$axios.post('http://localhost:8081/api/blog/save',{
 				bid:this.bid||this.blog.bid,

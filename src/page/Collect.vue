@@ -42,6 +42,18 @@
         <el-table-column label="操作">
             <template slot-scope="scope">
                 <el-button size="mini" @click="delCollect(scope.row.bid)">删除</el-button>
+                <el-button size="mini">
+                    <router-link :to="{
+                        name:'blog',
+                        params:{
+                            bid:scope.row.bid,
+                            btitle:scope.row.btime,
+                            btype:scope.row.btype,
+                            bcontent:scope.row.bcontent,
+                            btime:scope.row.btime
+                        }
+                    }">点击查看</router-link>
+                </el-button>
             </template>
         </el-table-column>
     </el-table>
@@ -120,7 +132,8 @@ export default {
                 url:'http://localhost:8081/api/collect/delAll',
                 data:delList
             }).then(res=>{
-                res.data
+                // res.data
+                this.$message.success('成功')
             },
             error=>{
                 console.log(error.message);
