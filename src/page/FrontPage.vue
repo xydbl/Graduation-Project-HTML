@@ -20,7 +20,7 @@
                     }
                 }">
                     <img v-if="item.bimage!=null&&item.bimage!=''" :src="require('../assets/blogimage/'+item.bimage)" alt="">
-                    <img v-else src="../assets/White.png" alt="">
+                    <img v-else src="../assets/White.png" alt="" style="width:100%;height:100%">
                 </router-link>
             </el-carousel-item>
         </el-carousel>
@@ -29,6 +29,7 @@
     <!-- 搜索 -->
     <div class="searchBar">
         <div class="tag">
+            <el-tag style="cursor:pointer;" @click="getPage">取消</el-tag>
             <el-tag size="" v-for=" li in typeList" @click="searchType(li.blogtype)" :key="li.tid" style="margin-left:20px;cursor: pointer;">{{li.blogtype}}</el-tag>
         </div>
         <input type="text" style="height:36px;width:360px;" placeholder="请输入要搜索的内容" v-model="search" @keyup.enter="SearchBlog">

@@ -13,8 +13,11 @@ import {Menu,Submenu,MenuItem,Button,Input,Form,FormItem,
 // mavon-editor 引入
 import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
+// import vueHighlightJS from 'vue-highlightjs'
+// import 'highlight.js/styles/atom-one-dark.css'
+// import hljs from 'highlight.js/lib/core'
 Vue.use(mavonEditor)
-
+// Vue.use(vueHighlightJS)
 Vue.use(VueRouter)
 
 // Vue.prototype.$ELEMENT = { size: 'small', zIndex: 3000 }

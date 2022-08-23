@@ -72,6 +72,8 @@
 <script>
 import { mapMutations, mapState } from 'vuex'
 import {marked} from 'marked'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/monokai-sublime.css'
 export default {
     name:'Blog',
     data() {
@@ -79,6 +81,7 @@ export default {
         // 发表评论
         commentary:'',
         username:'',
+        content:'',
         // repMsg:'',
         isReply:false,
         // 回复信息
@@ -341,6 +344,41 @@ export default {
         setTimeout(() => {
           this.addBlogClick()
         }, 6000);
+        let rendererMD=new marked.Renderer();
+        marked.setOptions({
+          renderer:rendererMD,
+          highlight:function(code){
+            return hljs.highlightAuto(code).valus;
+          },
+          pedantic:false,
+          gfm:true,
+          tables:true,
+          breaks:false,
+          sanitize:false,
+          smartLists:true,
+          smartypants:false,
+          xhtml:false
+        });
+        // setTimeout(()=>{
+        //   console.log(this.bcontent||this.blog.bcontent||'');
+        //   this.content =marked(this.bcontent||this.blog.bcontent||'')
+        // },300)
+        // marked.setOptions({
+        //   highlight:function(code,lang){
+        //     const hljs=require('highlight.js')
+        //     const language=hljs.getLanguage(lang)?lang : 'plaintext'
+        //     return hljs.highlight(code,{language}).value
+        //   },
+        //   langPrefix:'hljs language-',
+        //   pedantic:false,
+        //   gfm:true,
+        //   breaks:false,
+        //   sanitize:false,
+        //   smartLists:true,
+        //   smartypants:false,
+        //   xhtml:false
+        // })
+        // console.log(marked.parse(this.bcontent||this.blog.bcontent||''));
     }
 }
 </script>

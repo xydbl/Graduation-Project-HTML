@@ -34,7 +34,7 @@
 				</el-upload>
 			</div>
 			<div class="mavonEditor">
-				<mavon-editor v-model="content" @imgAdd="imgAdd" ref="md" />
+				<mavon-editor v-model="content" @imgAdd="imgAdd" @save="saveEdit" ref="md" />
 			</div>
 		</div>
 	</div>
@@ -57,7 +57,20 @@ export default {
 	},
 	props:['bid','btitle','btype','bimg','bcontent'],
 	methods: {
-		...mapMutations('blogOptions',{currentBlog:'CURRENTBLOG'}),
+		// ...mapMutations('blogOptions',{currentBlog:'CURRENTBLOG'}),
+		getBlogMsg(){
+			let isEdit=sessionStorage.getItem('isEdit')
+			this.$axios.get(`http://localhost:8081/api/blog/findByBid/${this.bid||isEdit}`)
+			.then(res=>{
+				this.title= res.data.btitle
+				this.type= res.data.btype
+				this.content=res.data.bcontent
+				this.img=res.data.bimage
+				// console.log(res.data);
+			},error=>{
+				console.log(error.message);
+			})
+		},
 		updateBlogImg(params){
 			let file=params.file
 			let index=file.name.lastIndexOf(".")
@@ -130,30 +143,33 @@ export default {
 	},
 	computed:{
 		...mapState('userOptions',{user:'user'}),
-		...mapState('blogOptions',{blog:'blog'})
+		// ...mapState('blogOptions',{blog:'blog'})
 	},
 	mounted(){
 		let isEdit=sessionStorage.getItem('isEdit')
+		
 		if(isEdit==''||isEdit==undefined||isEdit==null){
 			sessionStorage.setItem('isEdit',this.bid)
 			// this.updateBid(this.bid)
-			this.currentBlog(this.bid)
+			// this.currentBlog(this.bid)
 		}else{
-			this.currentBlog(isEdit)
+			// this.currentBlog(isEdit)
 		}
 		setTimeout(() => {
-			sessionStorage.setItem('editBlog',JSON.stringify(this.blog))
+			this.getBlogMsg()
+			// sessionStorage.setItem('editBlog',JSON.stringify(this.blog))
+			// console.log(this.blog);
 		}, 300);
-		setTimeout(() => {
-			let editBlog=sessionStorage.getItem('editBlog')
-			if(editBlog!=''&&editBlog!=null){
-				editBlog=JSON.parse(editBlog)
-				this.title=editBlog.btitle
-				this.type=editBlog.btype
-				this.content=editBlog.bcontent
-				this.img=editBlog.bimage
-			}
-		}, 400);
+		// setTimeout(() => {
+		// 	let editBlog=sessionStorage.getItem('editBlog')
+		// 	if(editBlog!=''&&editBlog!=null){
+		// 		editBlog=JSON.parse(editBlog)
+		// 		this.title=editBlog.btitle
+		// 		this.type=editBlog.btype
+		// 		this.content=editBlog.bcontent
+		// 		this.img=editBlog.bimage
+		// 	}
+		// }, 600);
 	}
 }
 </script>
