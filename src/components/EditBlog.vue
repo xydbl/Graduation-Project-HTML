@@ -27,7 +27,7 @@
 					:http-request="updateBlogImg" 
 					:limit="1" 
 					multiple>
-					<img v-if="img" :src="require('../assets/blogimage/'+img)">
+					<img v-if="img" :src="require('../assets/blogimage/'+img)" style="width:100%;height:100%">
 					<i v-else class="el-icon-upload"></i>
 					<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
 					<div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过10M</div>

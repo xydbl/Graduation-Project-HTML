@@ -19,8 +19,8 @@
                     btime:item.btime
                     }
                 }">
-                    <img v-if="item.bimage!=null&&item.bimage!=''" :src="require('../assets/blogimage/'+item.bimage)" alt="">
-                    <img v-else src="../assets/White.png" alt="" style="width:100%;height:100%">
+                    <img v-if="item.bimage!=null&&item.bimage!=''" :src="require('../assets/blogimage/'+item.bimage)" alt="" style="width:100%;">
+                    <img v-else src="../assets/default.png" alt="" style="width:100%;height:100%">
                 </router-link>
             </el-carousel-item>
         </el-carousel>
@@ -30,7 +30,7 @@
     <div class="searchBar">
         <div class="tag">
             <el-tag style="cursor:pointer;" @click="getPage">取消</el-tag>
-            <el-tag size="" v-for=" li in typeList" @click="searchType(li.blogtype)" :key="li.tid" style="margin-left:20px;cursor: pointer;">{{li.blogtype}}</el-tag>
+            <el-tag size="" v-for=" li in typeList" @click="searchType(li.blogtype)" :key="li.tid" style="margin-left:20px;cursor: pointer;margin-top:10px;">{{li.blogtype}}</el-tag>
         </div>
         <input type="text" style="height:36px;width:360px;" placeholder="请输入要搜索的内容" v-model="search" @keyup.enter="SearchBlog">
         <el-button type="primary" icon="el-icon-search" @click="SearchBlog">搜索</el-button>
@@ -66,7 +66,7 @@
                     }
                 }" >
                     <img v-if="list.bimage!=null&&list.bimage!=''" :src="require('../assets/blogimage/'+list.bimage)" style="width:160px;height:90px;">
-                    <img v-else src="../assets/White.png" alt="" style="width:160px;height:90px;">
+                    <img v-else src="../assets/default.png" alt="" style="width:160px;height:90px;">
                     <div class="false1" style="height: 90px;width: 600px; position: relative;left: 170px;top: -94px;">
                         <strong>{{list.btitle}}</strong>
                     </div>
@@ -265,7 +265,7 @@ export default {
     position: relative;
     width: 460px;
     left: 550px;
-    top: 20px;
+    top: -10px;
 }
 
 /* .navigation{
@@ -315,8 +315,8 @@ export default {
     padding: 4px;
     width: 1000px;
     height: 1000px;
-    top: 50px;
-    left: 300px;
+    top: 10px;
+    left: 320px;
     border-left: 2px solid black;
 }
 
@@ -348,7 +348,9 @@ export default {
     margin-top: 40px;
 }
 .tag{
-    position: relative;
-    left: -420px;
+    position: absolute;
+    left: -450px;
+    width:200px;
+    height: 200px;
 }
 </style>

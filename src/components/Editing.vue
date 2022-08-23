@@ -27,7 +27,7 @@
 					:http-request="uploadBlogImg" 
 					:limit="1" 
 					multiple>
-					<img v-if="img" :src="require('../assets/blogimage/'+img)">
+					<img v-if="img" :src="require('../assets/blogimage/'+img)" style="width:100%;height:100%">
 					<i v-else class="el-icon-upload"></i>
 					<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
 					<div class="el-upload__tip" slot="tip">只能上传jpg/png文件，且不超过10M,只能上传一个文件</div>
@@ -63,7 +63,7 @@ export default {
 			this.$axios.get(`http://localhost:8081/api/blog/findByTitle/${this.title}`)
 			.then(res=>{
 				if(res.data){
-					alert('标题不可用')
+					this.$message.warning('标题不可用')
 				}
 			},
 			error=>{
@@ -82,7 +82,8 @@ export default {
 				bstate:0
 			}).then(res=>{
 				if(res.data){
-					alert("保存成功")
+					// alert("保存成功")
+					this.$message.success('保存成功')
 					sessionStorage.setItem("editing",JSON.stringify(res.data))
 				}
 			},
@@ -170,7 +171,7 @@ export default {
 					}).then(res=>{
 						// this.$refs.clear1.clearFiles()
 						// console.log(this.$refs.clear1.clearFiles());
-						console.log(res.data);
+						// console.log(res.data);
 						// file.clearFiles()
 						this.updateBid(res.data.bid)
 						this.img=res.data.bimage
@@ -189,7 +190,7 @@ export default {
 			formData.append('file',file)
 			this.$axios({
 				method:'post',
-				url:'http:/localhost:8081/api/mavon/imgAdd',
+				url:'http:/localhost:8081/api/mavon/addImg',
 				data:formData
 			})
 			.then(res=>{

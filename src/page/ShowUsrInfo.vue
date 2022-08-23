@@ -103,7 +103,7 @@ export default {
             this.$axios.post('http://localhost:8081/api/blog/page/state',{
                 id:this.uid||uid,
                 pageIndex:this.pageIndex,
-                pageSize:8,
+                pageSize:6,
             }).then(res=>{
                 this.tableData=res.data.records
                 this.total=res.data.total

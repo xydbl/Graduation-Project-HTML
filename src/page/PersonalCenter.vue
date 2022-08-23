@@ -22,7 +22,7 @@
 	  </div>
 	  <div class="right">
 		<div style="border-bottom: 2px solid red; font-size:21px;text-align:center;">
-			<h2>xxxx   欢迎使用</h2>
+			<h2>{{user}}   欢迎使用</h2>
 		</div>
 		<div>
 			<!-- <keep-alive include="EditBlog"> -->
@@ -34,9 +34,17 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 export default {
     name:'PersonalCenter',
+	data() {
+		return {
+			user:''
+		}
+	},
+	mounted(){
+		let username=localStorage.getItem("username")
+		this.user=username
+	}
 }
 </script>
 

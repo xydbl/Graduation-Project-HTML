@@ -20,7 +20,7 @@
       </div>
 	    <!-- 正文 -->
       <div>
-        <div v-html="compiledMarkdown"></div>
+        <div v-html="compiledMarkdown" v-highlight></div>
 	    </div>
       <!-- 评论 -->
       <div style="position: relative;border-bottom: 1px solid #7E8388;top:20px">
@@ -30,7 +30,7 @@
       </div>
       <div class="botm">
         <div>
-			    <input type="text" placeholder="进行评论" v-model="commentary"><button @click="sendComm">发表评论</button>
+			    <input type="text" placeholder="进行评论" v-model="commentary" style="margin-bottom:10px;"><button @click="sendComm">发表评论</button>
 		    </div>
         <div style="margin-left:20px;margin-top:10px;border-bottom:1px solid black" v-for=" comm in list" :key="comm.cid">
           <div>
@@ -72,7 +72,7 @@
 <script>
 import { mapMutations, mapState } from 'vuex'
 import {marked} from 'marked'
-import hljs from 'highlight.js'
+// import hljs from 'highlight.js'
 import 'highlight.js/styles/monokai-sublime.css'
 export default {
     name:'Blog',
@@ -296,7 +296,7 @@ export default {
       ...mapState('blogOptions',{blog:'blog'}),
       // ...mapState('commentaryOptions',{commentaryList:'commentaryList'}),
       compiledMarkdown(){
-        return marked.parse(this.bcontent||this.blog.bcontent||'',{sanitize:true})
+        return marked.parse(this.bcontent||this.blog.bcontent||'')
       },
       // 评论数量
       // getCommNum(){
@@ -348,7 +348,8 @@ export default {
         marked.setOptions({
           renderer:rendererMD,
           highlight:function(code){
-            return hljs.highlightAuto(code).valus;
+            const hljs=require('highlight.js')
+            return hljs.highlightAuto(code).value;
           },
           pedantic:false,
           gfm:true,
@@ -364,20 +365,26 @@ export default {
         //   this.content =marked(this.bcontent||this.blog.bcontent||'')
         // },300)
         // marked.setOptions({
+        //   renderer:new marked.Renderer(),
         //   highlight:function(code,lang){
         //     const hljs=require('highlight.js')
         //     const language=hljs.getLanguage(lang)?lang : 'plaintext'
         //     return hljs.highlight(code,{language}).value
         //   },
         //   langPrefix:'hljs language-',
+        //   breaks:false,
+        //   headerPrefix:'',
+        //   mangle:true,
         //   pedantic:false,
         //   gfm:true,
         //   breaks:false,
         //   sanitize:false,
+        //   silent:false,
         //   smartLists:true,
         //   smartypants:false,
         //   xhtml:false
         // })
+        // let y=shallowRef()
         // console.log(marked.parse(this.bcontent||this.blog.bcontent||''));
     }
 }
