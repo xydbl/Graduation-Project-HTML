@@ -104,11 +104,12 @@ export default {
 
       // 获取评论 包含点赞等信息
       getComm(){
+        let nanoid=sessionStorage.getItem('nanoid')
         let username=localStorage.getItem("username")
         // console.log(username,this.blog.bid,this.bid);
         this.$axios.post('http://localhost:8081/api/commentary/findByBid',{
           bid:this.bid||this.blog.bid,
-          s:this.user.userName||username
+          s:this.user.userName||username||nanoid
         }).then(res=>{
           // console.log(res.data);
           this.list=res.data
@@ -151,9 +152,10 @@ export default {
         //   this.$message.warning('')
         //   return false
         // }
+        let nanoid=sessionStorage.getItem('nanoid')
         this.$axios.post('http://localhost:8081/api/dTable/add',{
           dcid:cid,
-          duser:this.user.userName||'游客'
+          duser:this.user.userName||nanoid
         }).then(res=>{
           this.getComm()
         },error=>{
@@ -360,32 +362,6 @@ export default {
           smartypants:false,
           xhtml:false
         });
-        // setTimeout(()=>{
-        //   console.log(this.bcontent||this.blog.bcontent||'');
-        //   this.content =marked(this.bcontent||this.blog.bcontent||'')
-        // },300)
-        // marked.setOptions({
-        //   renderer:new marked.Renderer(),
-        //   highlight:function(code,lang){
-        //     const hljs=require('highlight.js')
-        //     const language=hljs.getLanguage(lang)?lang : 'plaintext'
-        //     return hljs.highlight(code,{language}).value
-        //   },
-        //   langPrefix:'hljs language-',
-        //   breaks:false,
-        //   headerPrefix:'',
-        //   mangle:true,
-        //   pedantic:false,
-        //   gfm:true,
-        //   breaks:false,
-        //   sanitize:false,
-        //   silent:false,
-        //   smartLists:true,
-        //   smartypants:false,
-        //   xhtml:false
-        // })
-        // let y=shallowRef()
-        // console.log(marked.parse(this.bcontent||this.blog.bcontent||''));
     }
 }
 </script>

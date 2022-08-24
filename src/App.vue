@@ -17,13 +17,17 @@
 import Top from './components/Top.vue'
 import Primary from './components/Primary.vue'
 import BottomDisplay from './components/BottomDisplay.vue'
-
+import {nanoid} from 'nanoid'
+import { mapState } from 'vuex'
 export default {
   name: 'app',
   components: {
 	  Top,
     Primary,
     BottomDisplay
+  },
+  computed:{
+    ...mapState('userOptions',{user:'user'}),
   },
   mounted(){
    let isLoginOut=null
@@ -58,6 +62,16 @@ export default {
       console.log(error.message);
     })
    }
+   setTimeout(() => {
+    if(!this.user.isLogin){
+      let nanoid =sessionStorage.getItem('nanoid')
+      if(nanoid==null||nanoid==''){
+        sessionStorage.setItem("nanoid",nanoid())
+      }
+    }else{
+      sessionStorage.setItem("nanoid",'')
+    }
+   },600)
   }
 }
 </script>

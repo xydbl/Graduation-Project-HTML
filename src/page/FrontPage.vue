@@ -30,7 +30,7 @@
     <div class="searchBar">
         <div class="tag">
             <el-tag style="cursor:pointer;" @click="getPage">取消</el-tag>
-            <el-tag size="" v-for=" li in typeList" @click="searchType(li.blogtype)" :key="li.tid" style="margin-left:20px;cursor: pointer;margin-top:10px;">{{li.blogtype}}</el-tag>
+            <el-tag size="" v-for=" li in typeList" @click="searchType(li.blogtype,$event)" :key="li.tid" style="margin-left:20px;cursor: pointer;margin-top:10px;">{{li.blogtype}}</el-tag>
         </div>
         <input type="text" style="height:36px;width:360px;" placeholder="请输入要搜索的内容" v-model="search" @keyup.enter="SearchBlog">
         <el-button type="primary" icon="el-icon-search" @click="SearchBlog">搜索</el-button>
@@ -51,7 +51,7 @@
     <!-- 首页展示 -->
     <div class="exhibit">
         <div style="border-bottom: 2px solid red;height:60px;">
-            <h2 style="position:relative;left:20px">new</h2>
+            <h2 style="position:relative;left:20px">{{title||'new'}}</h2>
         </div>
         <div class="blogExhibit">
             <div v-for="list in pageList.records" :key="list.bid">
@@ -67,10 +67,10 @@
                 }" >
                     <img v-if="list.bimage!=null&&list.bimage!=''" :src="require('../assets/blogimage/'+list.bimage)" style="width:160px;height:90px;">
                     <img v-else src="../assets/default.png" alt="" style="width:160px;height:90px;">
-                    <div class="false1" style="height: 90px;width: 600px; position: relative;left: 170px;top: -94px;">
+                    <div class="false1" style="height: 90px;width: 740px; position: relative;left: 190px;top: -94px;">
                         <strong>{{list.btitle}}</strong>
                     </div>
-                    <div style="position: relative;left:780px;width:160px;top:-185px;height:90px;text-align:center;line-height:70px;">
+                    <div style="position: relative;left:950px;width:160px;top:-185px;height:90px;text-align:center;line-height:70px;">
                         {{list.btime}}
                     </div>
                 </router-link>
@@ -99,6 +99,7 @@ export default {
             // 博客列表
             blogList:[],
             titleBlog:'',
+            title:'',
             // 搜索
             search:'',
             oldSearch:'',
@@ -207,7 +208,8 @@ export default {
         //     }
         // },
         // 按类型搜索
-        searchType(type){
+        searchType(type,e){
+            // console.log(e.target.innerText);
             if(this.state!=2){
                 this.pageIndex=1
                 this.state=2
@@ -219,6 +221,7 @@ export default {
             })
             .then(res=>{
                 this.pageList=res.data
+                this.title=e.target.innerText
             },error=>{
                 console.log(error.message);
             })
@@ -313,7 +316,7 @@ export default {
     position: relative;
     margin: 5px;
     padding: 4px;
-    width: 1000px;
+    width: 1200px;
     height: 1000px;
     top: 10px;
     left: 320px;
@@ -324,7 +327,7 @@ export default {
     position: relative;
     top: 10px;
     left: 6px;
-    width: 1000px;
+    width: 1200px;
     height: 920px;
 }
 .blogExhibit div{

@@ -34,7 +34,7 @@
 				</el-upload>
 			</div>
 			<div class="mavonEditor">
-				<mavon-editor v-model="content" @imgAdd="imgAdd1" ref="edingMd" />
+				<mavon-editor v-model="content" @imgAdd="imgAdd1" @click="save" ref="edingMd" />
 			</div>
 		</div>
 	</div>
@@ -85,6 +85,8 @@ export default {
 					// alert("保存成功")
 					this.$message.success('保存成功')
 					sessionStorage.setItem("editing",JSON.stringify(res.data))
+					this.updateBid(res.data.bid)
+					console.log(res.data);
 				}
 			},
 			error=>{
@@ -119,6 +121,7 @@ export default {
 		// },
 		// 发布
 		pushBlog() {
+			console.log(this.bid,this.user.uid);
 			this.$axios.post('http://localhost:8081/api/blog/save',{
 				bid:this.bid,
 				buid:this.user.uid,
@@ -190,7 +193,7 @@ export default {
 			formData.append('file',file)
 			this.$axios({
 				method:'post',
-				url:'http:/localhost:8081/api/mavon/addImg',
+				url:'http://localhost:8081/api/mavon/addImg',
 				data:formData
 			})
 			.then(res=>{

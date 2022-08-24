@@ -201,9 +201,13 @@ router.beforeEach((to, from, next) => {
                 next('/personalcenter/pushblog')
             }else{
                 next()
+                // console.log(to,from);
             }
         }else{
-            alert('权限不足')
+            let sure=confirm('权限不足')
+            if(sure){
+                next('/frontPage')
+            }
         }
     }else{
         // if(to.fullPath=='/blog' && from.fullPath!='/frontPage'){
@@ -230,8 +234,11 @@ router.afterEach((to, from) => {
         sessionStorage.setItem('uid','')
     }
     if (from.fullPath=='/personalcenter/editblog') {
-        sessionStorage.setItem('editBlog','')
+        // sessionStorage.setItem('editBlog','')
         sessionStorage.setItem('isEdit','')
+    }
+    if(from.fullPath=='/editing'){
+        sessionStorage.setItem('editBlog','')
     }
     if(to.fullPath=='/setting/accountSetting'&&from.fullPath=='/setting/accountSetting/settingPassWord'){
     }else if(to.fullPath=='/setting/accountSetting/settingPassWord'&&from.fullPath=='/setting/accountSetting'){    

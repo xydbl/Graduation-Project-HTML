@@ -68,7 +68,7 @@ export default {
       finishSig(){
         this.isSig=false
         axios.post('http://localhost:8081/api/user/updateUserById',{
-          uid:this.usMsg.uid,
+          uid:this.user.uid,
           signature:this.signature
         })
         .then(res=>{
@@ -82,7 +82,9 @@ export default {
       },
       // 放弃修改
       giveSet(){
-        this.isSig=false
+        // setTimeout(() => {
+          this.isSig=false
+        // }, 300);
       }
     },
     computed:{
