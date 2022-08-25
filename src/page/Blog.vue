@@ -60,9 +60,9 @@
           <input type="text" placeholder="请输入要回复的内容" v-model="hMessage" ref="reply"><button @click="endReply">取消</button>
           <button @click="replyMsg">回复</button>
         </div>
-        <!-- <div> -->
-          <!-- <el-button :plain="true" @click="msg1">xxxxx</el-button> -->
-        <!-- </div> -->
+        <div class="scrolling">
+          <el-button size="mini" v-if="isScroll" @click="backTop" type="info">返回顶部</el-button>
+        </div>
       </div>
       
     </div>
@@ -91,7 +91,8 @@ export default {
         // 评论列表
         list:[],
         // 评论数
-        commNum:''
+        commNum:'',
+        isScroll:false
       }
     },
     props:["bid","btype",'btitle','bcontent','btime'],
@@ -291,6 +292,17 @@ export default {
         },error=>{
           console.log(error.message);
         })
+      },
+      backTop(){
+        document.documentElement.scrollTop = 0
+      },
+      scroll1(e){
+        let scrollTop=document.documentElement.scrollTop
+        if (scrollTop>400) {
+          this.isScroll=true
+        }else{
+          this.isScroll=false
+        }
       }
     },
     computed:{
@@ -316,6 +328,7 @@ export default {
       // }
     },
     mounted(){
+      window.addEventListener('scroll',this.scroll1,true)
         let bid=sessionStorage.getItem("getbid")
         if (bid==null||bid=='') {
           // console.log(this.bid);
@@ -362,6 +375,9 @@ export default {
           smartypants:false,
           xhtml:false
         });
+    },
+    beforeDestroy() {
+      window.removeEventListener('scroll',this.scroll,true)
     }
 }
 </script>
@@ -430,5 +446,10 @@ export default {
 }
 .lookcomm:hover{
   color: skyblue;
+}
+.scrolling{
+  position: fixed;
+  top:400px;
+  right:480px;
 }
 </style>
