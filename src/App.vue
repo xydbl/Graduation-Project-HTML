@@ -63,10 +63,11 @@ export default {
     })
    }
    setTimeout(() => {
+    let tid=nanoid()
     if(!this.user.isLogin){
       let nanoid =sessionStorage.getItem('nanoid')
       if(nanoid==null||nanoid==''){
-        sessionStorage.setItem("nanoid",nanoid())
+        sessionStorage.setItem("nanoid",tid)
       }
     }else{
       sessionStorage.setItem("nanoid",'')

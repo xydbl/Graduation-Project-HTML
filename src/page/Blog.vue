@@ -1,7 +1,7 @@
 <template>
   <div class="bbody">
     <div class="bmain">
-      <div style="border-bottom: 1px solid red; width:630px">
+      <div style="border-bottom: 1px solid red; width:700px">
         <!-- 标题 -->
         <h1>{{btitle||blog.btitle}}</h1>
         <span style="position: relative; left: 10px;bottom: 5px;">
@@ -15,8 +15,8 @@
             }
             }">{{username}}</router-link>
         </span>
-        <el-button type="warning" icon="el-icon-star-off" circle style="position:relative;left:450px;top:-40px" @click="collectBlog" size="mini"></el-button>
-        <span style="position: relative; left: 230px;bottom: 5px;">发布时间：2020-08-09 07:25:33</span>
+        <el-button type="warning" icon="el-icon-star-off" circle style="position:relative;left:550px;top:-10px" @click="collectBlog" size="mini"></el-button>
+        <span style="position: relative; left: 240px;bottom: 5px;">发布时间：2020-08-09 07:25:33</span>
       </div>
 	    <!-- 正文 -->
       <div>
@@ -262,7 +262,7 @@ export default {
       // 收藏博客
       collectBlog(){
         if(this.user.isTouristsLogin){
-          this.$message.warning("注册后才可所有此功能")
+          this.$message.warning("登录后才可所有此功能")
           return false
         }
         this.$axios.post('http://localhost:8081/api/collect/add',{
@@ -386,7 +386,7 @@ export default {
 .bbody{
   position: absolute;
   left: 400px;
-  width: 650px;
+  width: 700px;
   height: 700px;
 }
 .bmain{
@@ -450,6 +450,6 @@ export default {
 .scrolling{
   position: fixed;
   top:400px;
-  right:480px;
+  right:450px;
 }
 </style>

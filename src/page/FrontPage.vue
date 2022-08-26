@@ -67,10 +67,11 @@
                 }" >
                     <img v-if="list.bimage!=null&&list.bimage!=''" :src="require('../assets/blogimage/'+list.bimage)" style="width:160px;height:90px;">
                     <img v-else src="../assets/default.png" alt="" style="width:160px;height:90px;">
-                    <div class="false1" style="height: 90px;width: 740px; position: relative;left: 190px;top: -94px;">
+                    <div class="false1" style="height: 90px;width: 700px; position: relative;left: 190px;top: -94px;">
                         <strong>{{list.btitle}}</strong>
                     </div>
-                    <div style="position: relative;left:950px;width:160px;top:-185px;height:90px;text-align:center;line-height:70px;">
+                    <div style="position:relative;left:910px;height:90px;width:140px;top: -185px;text-align:center;line-height:70px"><i class="el-icon-view"></i>{{list.bclick}}</div>
+                    <div style="position: relative;left:1100px;width:160px;top:-275px;height:90px;text-align:center;line-height:70px;">
                         {{list.btime}}
                     </div>
                 </router-link>
@@ -316,10 +317,10 @@ export default {
     position: relative;
     margin: 5px;
     padding: 4px;
-    width: 1200px;
+    width: 1350px;
     height: 1000px;
     top: 10px;
-    left: 320px;
+    left: 180px;
     border-left: 2px solid black;
 }
 
@@ -327,7 +328,7 @@ export default {
     position: relative;
     top: 10px;
     left: 6px;
-    width: 1200px;
+    width: 1350px;
     height: 920px;
 }
 .blogExhibit div{
@@ -353,7 +354,7 @@ export default {
 .tag{
     position: absolute;
     left: -450px;
-    width:200px;
+    width:350px;
     height: 200px;
 }
 </style>

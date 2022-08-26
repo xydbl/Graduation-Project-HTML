@@ -13,7 +13,7 @@
 		</div>
 		<div class="right">
 			
-			<input type="text" class="titleIn" v-model="title"><br>
+			<input type="text" class="titleIn" v-model="title" @input="titleIsTrue1"><br>
 			<!-- <select name="" class="stype" v-model="type">
 				<option value="">xxxx</option>
 			</select><br> -->
@@ -137,6 +137,20 @@ export default {
 				// res.data
 				this.$router.back()
 			},error=>{
+				console.log(error.message);
+			})
+		},
+		titleIsTrue1(){
+			this.$axios.post('http://localhost:8081/api/blog/findTitle',{
+				bid:this.bid||this.blog.bid,
+				title:this.title
+			})
+			.then(res=>{
+				if(res.data){
+					this.$message.warning('标题不可用')
+				}
+			},
+			error=>{
 				console.log(error.message);
 			})
 		}
